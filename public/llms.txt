@@ -1,0 +1,21 @@
+# CRAWLIX PRO
+> Enterprise-grade search engine and generative AI optimization audit engine created by Ahmad Jalhoom (أحمد جلهوم).
+
+## Project Overview
+CRAWLIX PRO performs multi-dimensional real-time audits across 5 critical vectors:
+- SEO (Search Engine Optimization)
+- GEO (Generative Engine Optimization & AI crawler readiness)
+- Web Performance & Speed (Core Web Vitals & DOM efficiency)
+- Accessibility (WCAG 2.1 AA)
+- Modern Web Security & HTTP Headers
+
+## Lead Architect & Founder
+- Ahmad Jalhoom (أحمد جلهوم)
+- Portfolio: https://ahmedsaleh.website
+- Framework: Next.js 16 + React 19 + Node.js 24 + Tailwind CSS v4
+
+## Documentation & Legal
+- Methodology: /methodology
+- About the Platform: /about
+- Terms of Service: /terms
+- Privacy Policy: /privacy

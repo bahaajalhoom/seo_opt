@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* 90/10 Anti-Slop Studio Palette */
+    --canvas: 6 7 10;             /* #06070A Ultra Deep Obsidian */
+    --surface-1: 13 15 20;        /* #0D0F14 Carbon Studio Surface */
+    --surface-2: 18 21 28;        /* #12151C Interactive Element Well */
+    --surface-elevated: 24 28 38; /* #181C26 Popovers & Modals */
+    
+    --fg-primary: 248 249 250;    /* #F8F9FA Pure Crisp Titanium */
+    --fg-secondary: 156 163 175;  /* #9CA3AF Muted Subtitles */
+    --fg-tertiary: 100 116 139;   /* #64748B Subtle Technical Metadata */
+    
+    --border-subtle: 255 255 255; /* Opacity 0.08 */
+    --border-strong: 255 255 255; /* Opacity 0.16 */
+    
+    /* Exactly ONE domain accent: Laser Emerald */
+    --accent: 16 185 129;         /* #10B981 */
+    --accent-fg: 6 7 10;
+  }
+
+  * {
+    border-color: rgba(var(--border-subtle), 0.08);
+  }
+
+  html {
+    color-scheme: dark;
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--fg-primary));
+  }
+
+  body {
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--fg-primary));
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+
+  /* RTL / Arabic Typography Polish: Letter-spacing is illegal in Arabic cursive script */
+  [dir="rtl"] {
+    font-family: 'IBM Plex Sans Arabic', 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  [dir="rtl"],
+  [dir="rtl"] *:not([dir="ltr"]):not(code):not(pre) {
+    letter-spacing: 0px !important;
+  }
+
+  [dir="ltr"] {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Studio Precision Physics Surfaces */
+.surface-hud {
+  background-color: rgb(var(--surface-1));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07), 0 8px 32px -4px rgba(0, 0, 0, 0.6);
+}
+
+.surface-hud-interactive {
+  background-color: rgb(var(--surface-1));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.surface-hud-interactive:hover {
+  background-color: rgb(var(--surface-2));
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.surface-elevated-modal {
+  background-color: rgb(var(--surface-elevated));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 32px 80px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Precision Grid lines */
+.bg-grid-precision {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Custom Minimalist Dark Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
