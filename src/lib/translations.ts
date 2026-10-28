@@ -11,7 +11,7 @@ export interface TranslationDictionary {
   creatorRole: string;
   navAudit: string;
   navUiUx: string;
-  navFeatures: string;
+  navFigmaStudio: string;
   navMethodology: string;
   navAbout: string;
   navTerms: string;
@@ -137,7 +137,7 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     creatorRole: 'مهندس برمجيات رئيسي ومصمم نظم الذكاء الاصطناعي المتقدمة',
     navAudit: 'فحص SEO & GEO',
     navUiUx: 'فحص UI/UX',
-    navFeatures: 'مقترح الميزات (Features)',
+    navFigmaStudio: 'استوديو Figma',
     navMethodology: 'المنهجية',
     navAbout: 'عن المؤسس',
     navTerms: 'شروط الاستخدام',
@@ -271,7 +271,7 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     creatorRole: 'Lead Software Architect & AI Systems Engineer',
     navAudit: 'SEO & GEO Audit',
     navUiUx: 'UI/UX Lab',
-    navFeatures: 'Feature Architect',
+    navFigmaStudio: 'Figma Studio',
     navMethodology: 'Methodology',
     navAbout: 'About Architect',
     navTerms: 'Terms of Service',
