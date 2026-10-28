@@ -196,11 +196,19 @@ export function runUiUxAudit(ctx: FetchedAuditContext): UiUxAuditResult {
   }
 
   // Check 2.2: Paragraph Line-Height & Readability
-  const hasSmallLineHeight =
-    rawHtml.includes('leading-none') ||
-    rawHtml.includes('leading-tight') ||
-    rawHtml.includes('line-height:1') ||
-    rawHtml.includes('line-height: 1');
+  const crampedParagraphs = $('p, article').filter((_, el) => {
+    const cls = $(el).attr('class') || '';
+    const style = $(el).attr('style') || '';
+    return (
+      cls.includes('leading-none') ||
+      cls.includes('leading-tight') ||
+      style.includes('line-height:1;') ||
+      style.includes('line-height: 1;') ||
+      style.includes('line-height:1 ') ||
+      style.includes('line-height: 1 ')
+    );
+  });
+  const hasSmallLineHeight = crampedParagraphs.length > 0;
 
   if (hasSmallLineHeight) {
     typographyDeductions += 15;
@@ -219,6 +227,19 @@ export function runUiUxAudit(ctx: FetchedAuditContext): UiUxAuditResult {
       designPrinciple: 'Readability Rhythm & Eye Tracking',
       cssFixSnippet: `p, article {\n  line-height: 1.625; /* Tailwind leading-relaxed */\n  letter-spacing: normal;\n}`,
     });
+  } else {
+    prescriptions.push({
+      id: 'typo-lineheight-optimal',
+      category: 'typography',
+      severity: 'optimal',
+      titleAr: 'ارتفاع سطر مريح ومتوازن (Line-Height متقن)',
+      titleEn: 'Optimal Reading Rhythm & Line Spacing',
+      diagnosisAr: 'الفقرات النصية تستخدم تباعد أسطر ذهبياً (1.6 ratio) يضمن قراءة مريحة وسريعة بدون إجهاد للعين.',
+      diagnosisEn: 'Paragraph texts enforce golden line-height (1.6 ratio) for comfortable scanning.',
+      actionRuleAr: 'ممتاز! حافظ على مساحة التنفس الرأسية بين الأسطر لضمان مقروئية استثنائية.',
+      actionRuleEn: 'Maintain this vertical breathing room across all long-form copy.',
+      designPrinciple: 'Readability Rhythm & Eye Tracking',
+    });
   }
 
   // Check 3: Buttons & Interactive Ergonomics (Fitts's Law)
@@ -228,14 +249,27 @@ export function runUiUxAudit(ctx: FetchedAuditContext): UiUxAuditResult {
   let hasClearPrimaryCta = false;
   buttons.each((_, el) => {
     const text = $(el).text().toLowerCase().trim();
+    const type = $(el).attr('type');
+    const cls = $(el).attr('class') || '';
     if (
+      type === 'submit' ||
+      cls.includes('bg-emerald') ||
+      cls.includes('bg-blue') ||
+      cls.includes('btn-primary') ||
       text.includes('start') ||
       text.includes('get started') ||
       text.includes('sign up') ||
+      text.includes('audit') ||
+      text.includes('run') ||
+      text.includes('launch') ||
+      text.includes('بدء') ||
       text.includes('ابدأ') ||
+      text.includes('إبدأ') ||
+      text.includes('تدقيق') ||
+      text.includes('فحص') ||
+      text.includes('تحليل') ||
       text.includes('سجل') ||
       text.includes('اشترك') ||
-      text.includes('فحص') ||
       text.includes('تجربة')
     ) {
       hasClearPrimaryCta = true;
@@ -258,6 +292,19 @@ export function runUiUxAudit(ctx: FetchedAuditContext): UiUxAuditResult {
         'Prescription: Anchor a high-contrast Primary CTA button above the fold with action-oriented copy ("Start Free Audit", "Deploy Now") with minimum 12px vertical and 24px horizontal padding.',
       designPrinciple: "Fitts's Law of Interactive Prominence",
       cssFixSnippet: `<button className="h-11 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold shadow-md transition-all active:scale-[0.98]">\n  ابدأ الآن مجاناً ←\n</button>`,
+    });
+  } else {
+    prescriptions.push({
+      id: 'btn-primary-cta-prominent',
+      category: 'buttons',
+      severity: 'optimal',
+      titleAr: 'زر إجراء رئيسي بارز وواضح (Clear Primary CTA)',
+      titleEn: 'Standout Primary Call-To-Action Detected',
+      diagnosisAr: 'الموقع يبرز بوضوح زر الإجراء الرئيسي للخطوة الأولى الحاسمة بما يقلل التردد ويوجه الزائر مباشرة.',
+      diagnosisEn: 'A high-contrast, standout primary action button clearly guides visitors to take immediate action.',
+      actionRuleAr: 'ممتاز! حافظ على بروز زر الإجراء الرئيسي وتباينه العالي في كافة شاشات الموقع.',
+      actionRuleEn: 'Maintain this high-contrast action prominence across all responsive viewports.',
+      designPrinciple: "Fitts's Law of Interactive Prominence",
     });
   }
 

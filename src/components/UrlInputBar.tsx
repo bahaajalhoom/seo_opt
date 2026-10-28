@@ -162,11 +162,11 @@ export function UrlInputBar({ lang, isLoading, onAudit }: UrlInputBarProps) {
             />
           </div>
 
-          {/* Submit Action Button */}
+          {/* Submit Action Button - High Prominence Primary CTA */}
           <button
             type="submit"
             disabled={isLoading}
-            className="h-11 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#06070A] text-xs font-bold uppercase flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none shrink-0 shadow-[0_2px_12px_rgba(16,185,129,0.25)]"
+            className="h-12 px-7 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#06070A] text-xs font-extrabold uppercase flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)] tracking-wide"
           >
             {isLoading ? (
               <>

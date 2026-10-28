@@ -44,21 +44,22 @@ export function extractBrandTokens(colors?: ExtractedColor[]): BrandTokens {
     };
   }
 
-  // 1. Accent: Find the most frequent non-black/non-white color with vibrant luminance
+  // 1. Canvas Background: find the most frequent background/dark canvas color
+  const darkBgs = colors.filter((c) => c.role === 'background' || c.luminance < 0.08);
+  const canvasBg = darkBgs[0]?.hex || DEFAULT_BRAND_FALLBACKS.canvasBg;
+  const surfaceBg = darkBgs[1]?.hex || (darkBgs[0]?.hex ? darkBgs[0].hex : DEFAULT_BRAND_FALLBACKS.surfaceBg);
+
+  // 2. Accent: Must have high visual energy and distinct contrast from canvasBg
   const accentCandidates = colors.filter(
     (c) =>
       c.hex !== '#FFFFFF' &&
       c.hex !== '#000000' &&
-      c.hex !== '#050608' &&
-      c.luminance > 0.1 &&
-      c.luminance < 0.85
+      c.hex.toUpperCase() !== canvasBg.toUpperCase() &&
+      c.hex.toUpperCase() !== surfaceBg.toUpperCase() &&
+      c.luminance >= 0.12 &&
+      c.luminance <= 0.85
   );
-  const accent = accentCandidates[0]?.hex || colors[0]?.hex || DEFAULT_BRAND_FALLBACKS.accent;
-
-  // 2. Canvas Background: find the most frequent background/dark canvas color
-  const darkBgs = colors.filter((c) => c.role === 'background' || c.luminance < 0.08);
-  const canvasBg = darkBgs[0]?.hex || DEFAULT_BRAND_FALLBACKS.canvasBg;
-  const surfaceBg = darkBgs[1]?.hex || (darkBgs[0]?.hex ? darkBgs[0].hex : DEFAULT_BRAND_FALLBACKS.surfaceBg);
+  const accent = accentCandidates[0]?.hex || DEFAULT_BRAND_FALLBACKS.accent;
 
   // 3. Text primary: high contrast against canvasBg
   const isLightBg = canvasBg.toLowerCase() === '#ffffff';

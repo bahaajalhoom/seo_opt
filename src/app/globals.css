@@ -17,12 +17,22 @@
     --border-strong: 255 255 255; /* Opacity 0.16 */
     
     /* Exactly ONE domain accent: Laser Emerald */
+    --brand-accent: #10B981;
+    --brand-accent-hover: #059669;
+    --bg-canvas: #06070A;
+    --bg-surface: #0D0F14;
+    --text-primary: #F8F9FA;
+    --text-muted: #9CA3AF;
     --accent: 16 185 129;         /* #10B981 */
     --accent-fg: 6 7 10;
   }
 
   * {
     border-color: rgba(var(--border-subtle), 0.08);
+  }
+
+  p, article {
+    line-height: 1.625; /* 90/10 Readability standard (leading-relaxed) */
   }
 
   html {
