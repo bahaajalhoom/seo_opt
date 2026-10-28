@@ -266,6 +266,8 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
         description: 'No `Organization` schema.org entity was detected in JSON-LD.',
         impact: 'AI engines will struggle to identify your brand entity, official logo, and social handles.',
         recommendation: 'Embed an Organization schema with name, url, logo, and sameAs links.',
+        targetFile: 'src/components/seo/JsonLd.tsx',
+        codeSnippet: `<script\n  type="application/ld+json"\n  dangerouslySetInnerHTML={{\n    __html: JSON.stringify({\n      '@context': 'https://schema.org',\n      '@type': 'Organization',\n      name: 'Your Organization',\n      url: '${origin}',\n      logo: '${origin}/logo.png',\n      sameAs: ['https://twitter.com/yourhandle', 'https://github.com/yourhandle'],\n    }),\n  }}\n/>`,
       });
     }
     if (!hasWeb) {
@@ -330,6 +332,8 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
       description: `Page body contains only ${wordCount} words of readable text.`,
       impact: 'Generative AI search models rank and cite content based on factual completeness and semantic depth.',
       recommendation: 'Expand page copy with informative sections, product features, and comprehensive answers.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Expand page body copy with descriptive topics and comprehensive answers -->\n<section className="py-8 space-y-4 max-w-4xl">\n  <h2 className="text-2xl font-bold text-white">Platform Capabilities & Core Features</h2>\n  <p className="text-sm text-zinc-300 leading-relaxed">\n    Provide in-depth architectural details, key benefits, and direct factual answers to primary domain inquiries.\n  </p>\n</section>`,
       evidence: { wordCount },
     });
   }
@@ -344,6 +348,8 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
       description: `Text comprises only ${textToHtmlRatio.toFixed(1)}% of total HTML page weight.`,
       impact: 'Heavy markup boilerplate dilutes search crawler token density.',
       recommendation: 'Remove redundant wrapper divs, inline styles, or oversized SVG paths in markup.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Streamline markup: eliminate superfluous wrapper divs and inline SVGs -->\n<article className="max-w-4xl mx-auto space-y-6">\n  <h1 className="text-3xl font-bold">{pageTitle}</h1>\n  <p className="text-base text-zinc-300">{highDensityContent}</p>\n</article>`,
       evidence: { textToHtmlRatio: `${textToHtmlRatio.toFixed(1)}%` },
     });
   }
@@ -394,6 +400,8 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
       description: 'No navigational link to an About or Team page was found.',
       impact: 'E-E-A-T algorithms require identifiable corporate or editorial entities to grant citation authority.',
       recommendation: 'Add a clear link to `/about` in the header navigation or footer.',
+      targetFile: 'src/components/AuditHeader.tsx',
+      codeSnippet: `<!-- Add explicit About link to Header or Footer -->\n<Link href="/about" className="text-xs text-zinc-400 hover:text-white transition-colors">\n  About Us\n</Link>`,
     });
   }
   if (!hasPrivacy) {
@@ -407,6 +415,8 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
       description: 'No link to a Privacy Policy page was found.',
       impact: 'Basic trust signal required by both Google quality raters and AI safety filters.',
       recommendation: 'Add a `/privacy` policy link in your footer.',
+      targetFile: 'src/components/AuditFooter.tsx',
+      codeSnippet: `<!-- Add explicit Privacy Policy link to Footer -->\n<Link href="/privacy" className="text-xs text-zinc-400 hover:text-white transition-colors">\n  Privacy Policy\n</Link>`,
     });
   }
 
@@ -425,6 +435,8 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
       description: 'The document relies predominantly on generic `<div>` containers instead of `<main>`, `<article>`, and `<section>`.',
       impact: 'LLM tokenizers rely on semantic elements to distinguish primary article copy from sidebars and boilerplate.',
       recommendation: 'Wrap content in semantic `<main>`, `<article>`, and `<section>` tags.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Use semantic layout containers instead of generic nested divs -->\n<header>\n  <nav>{/* navigation items */}</nav>\n</header>\n<main>\n  <article>\n    <section>{/* structured content */}</section>\n  </article>\n</main>\n<footer>{/* footer content */}</footer>`,
     });
   }
 

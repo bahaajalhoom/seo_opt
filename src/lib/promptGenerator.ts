@@ -159,13 +159,12 @@ export function generateMasterRepairPrompt(audit: AuditResult, lang: SupportedLa
   const isAr = lang === 'ar';
   const criticals = audit.issues.filter((i) => i.severity === 'critical');
   const warnings = audit.issues.filter((i) => i.severity === 'warning');
-  const brandTokens = extractBrandTokens(audit.extractedColors);
 
   const header = isAr
-    ? `# 🛠️ برومبت الإصلاح الشامل المخصص لموقع ${audit.domain} (الدرجة الكاملة 100/100)
-**الهدف:** تصحيح كافة مشاكل السيو (SEO)، محركات الذكاء الاصطناعي (GEO)، الأداء، وتجربة المستخدم (UI/UX) مع الحفاظ على الهوية البصرية والألوان المستخرجة للموقع، لرفع النتيجة الحالية من (${audit.overallScore}/100) إلى (100/100) متطابقة مع المعايير الرسمية.`
+    ? `# 🛠️ برومبت الإصلاح الشامل للموقع: ${audit.domain} (الدرجة الكاملة 100/100)
+**الهدف:** تصحيح كافة مشاكل السيو (SEO)، محركات الذكاء الاصطناعي (GEO)، الأداء والسرعة، إمكانية الوصول، والأمان، لرفع النتيجة الحالية من (${audit.overallScore}/100) إلى (100/100) وفق أعلى المعايير الهندسية الرسمية.`
     : `# 🛠️ TAILORED MASTER REPAIR PROMPT: Elevate ${audit.domain} to 100/100 Perfect Score
-**Objective:** Resolve all technical SEO, Generative Engine (GEO), Performance, and UI/UX findings while preserving the site's authentic extracted brand palette, elevating score from (${audit.overallScore}/100) to verified (100/100) standard.`;
+**Objective:** Resolve all technical SEO, Generative Engine (GEO), Performance, Accessibility, and Security findings, elevating score from (${audit.overallScore}/100) to verified (100/100) standard.`;
 
   const metaTelemetry = isAr
     ? `## 📊 ملخص الفحص الحالي للموقع:
@@ -191,23 +190,23 @@ export function generateMasterRepairPrompt(audit: AuditResult, lang: SupportedLa
 
   const roleDirectives = isAr
     ? `## 🎯 دور الذكاء الاصطناعي وقواعد التنفيذ:
-أنت مهندس برمجيات وتصميم رئيسي (Principal Full-Stack & UI/UX Architect). مهمتك تطبيق التعديلات البرمجية التالية بدقة واحترافية:
-1. **كتابة كود إنتاجي جاهز للنسخ:** لا تكتفِ بالنصائح النظرية؛ اكتب الأكواد المحدثة كاملة لكل ملف محدد.
-2. **الالتزام بألوان وهوية الموقع:** استخدم الألوان المستخرجة في قسم الهوية البصرية أدناه.
-3. **توافقية Next.js / HTML5:** تطبيق المعايير الدلالية الحديثة والتأكد من عدم وجود أخطاء في الـ Hydration أو Render-blocking resources.
-4. **التجهيز الكامل لمحركات الذكاء الاصطناعي (GEO):** إنشاء ملف \`public/llms.txt\`، وتحديث \`public/robots.txt\`، وإضافة مخططات \`JSON-LD Schema\` الغنية لتمكين محركات Perplexity, ChatGPT, و Gemini من اقتباس الموقع.`
+أنت مهندس برمجيات رئيسي وخبير سيو ومحركات ذكاء اصطناعي (Principal Full-Stack, SEO & GEO Architect). مهمتك تطبيق التعديلات البرمجية التالية بدقة واحترافية:
+1. **كتابة كود إنتاجي جاهز للنسخ:** لا تكتفِ بالنصائح النظرية؛ اكتب الأكواد المحدثة كاملة لكل ملف محدد دون اختصارات.
+2. **معايير السيو والـ GEO المتقدمة:** ضبط وسوم Meta والعناوين الهرمية، وروابط Canonical، وخريطة الموقع، وملفات \`public/llms.txt\` و \`public/llms-full.txt\`، وتحديث أذونات \`public/robots.txt\` لروبوتات الذكاء الاصطناعي (GPTBot, ClaudeBot, PerplexityBot, Google-Extended).
+3. **مخططات البيانات المنظمة:** إضافة مخططات Schema.org بصيغة JSON-LD الغنية لتمكين محركات البحث والذكاء الاصطناعي من فهم الكيان والخدمات.
+4. **الأداء وسرعة التحميل (Core Web Vitals):** تحسين استجابة الخادم وترويسات التخزين المؤقت (Cache-Control)، وضغط البيانات، وإزالة حجب الرندرة (Render-blocking scripts).
+5. **إمكانية الوصول والأمان (A11y & Security):** اعتماد وسوم HTML5 الدلالية، وأوصاف الصور alt، وترويسات الأمان (HSTS, CSP, nosniff, Referrer-Policy).`
     : `## 🎯 AI Role & Execution Directives:
-You are a Principal Full-Stack & UI/UX Architect. Your task is to implement the following precise engineering changes:
+You are a Principal Full-Stack, SEO & GEO Architect. Your task is to implement the following precise engineering changes:
 1. **Production-Ready Code:** Do not provide abstract advice. Output complete, drop-in replacement files and code snippets.
-2. **Brand & Color Integrity:** Adhere strictly to the authentic extracted color tokens detailed below.
-3. **Modern Next.js / Web Standards:** Enforce strict semantic HTML5, zero hydration issues, and eliminate render-blocking assets.
-4. **Full Generative Engine Optimization (GEO):** Scaffold \`public/llms.txt\`, configure \`public/robots.txt\`, and inject rich \`JSON-LD Schema\` to maximize AI citations across Perplexity, ChatGPT, Claude, and Gemini.`;
-
-  const brandSection = buildBrandSection(brandTokens, isAr);
+2. **Advanced SEO & GEO Standards:** Configure metadata tags, canonical alternates, sitemaps, \`public/llms.txt\`, \`public/llms-full.txt\`, and open crawler permissions in \`public/robots.txt\` for AI bots (GPTBot, ClaudeBot, PerplexityBot, Google-Extended).
+3. **Structured Data:** Embed rich Schema.org JSON-LD entities to establish brand authority and knowledge graph citations.
+4. **Core Web Vitals & Speed:** Optimize caching headers, compression, bundle size, and eliminate render-blocking scripts.
+5. **Accessibility & Security:** Enforce semantic HTML5 landmarks, image alt attributes, and hardened security response headers (HSTS, CSP, nosniff, Referrer-Policy).`;
 
   const criticalSection = isAr
-    ? `## 🚨 2. المشاكل الحرجة التي يجب حلها فوراً (${criticals.length} مشاكل):`
-    : `## 🚨 2. Critical Deficiencies Requiring Immediate Action (${criticals.length} items):`;
+    ? `## 🚨 1. المشاكل الحرجة التي يجب حلها فوراً (${criticals.length} مشاكل):`
+    : `## 🚨 1. Critical Deficiencies Requiring Immediate Action (${criticals.length} items):`;
 
   const criticalItems = criticals
     .map((issue, idx) => {
@@ -225,8 +224,8 @@ You are a Principal Full-Stack & UI/UX Architect. Your task is to implement the 
     .join('\n\n');
 
   const warningSection = isAr
-    ? `## ⚠️ 3. التحذيرات والتحسينات الموصى بها (${warnings.length} عناصر):`
-    : `## ⚠️ 3. Warnings & Secondary Improvements (${warnings.length} items):`;
+    ? `## ⚠️ 2. التحذيرات والتحسينات الموصى بها (${warnings.length} عناصر):`
+    : `## ⚠️ 2. Warnings & Secondary Improvements (${warnings.length} items):`;
 
   const warningItems = warnings
     .map((issue, idx) => {
@@ -347,11 +346,11 @@ Sitemap: ${audit.url}/sitemap.xml
 
   const closing = isAr
     ? `## ✅ معايير القبول والتحقق:
-بعد تنفيذ الأكواد أعلاه، يرجى تقديم تقرير موجز يوضح الملفات التي تم تعديلها، مع التأكيد على وصول النتيجة إلى 100/100، والتوافق مع قاعدة 90/10 للألوان، وخلو الموقع من أي أخطاء برمجية أو تحذيرات أمنية.`
+بعد تطبيق كافة الأكواد والملفات المحددة أعلاه، يرجى تقديم تقرير موجز يوضح الملفات التي تم تعديلها أو إنشاؤها، مع التأكيد على خلو الموقع من أي أخطاء برمجية، وتفعيل أذونات الزواحف، ووصول نتائج الفحص إلى 100/100.`
     : `## ✅ Acceptance & Verification Criteria:
-Upon implementing these fixes, confirm that all modified files maintain strict zero-regression standards, Core Web Vitals remain in the green band, 90/10 color discipline is strictly preserved using the provided tokens, and verification confirms a 100/100 score.`;
+Upon implementing these fixes, confirm that all modified files maintain strict zero-regression standards, Core Web Vitals remain in the green band, search engine bots have full crawl permissions, and verification confirms a 100/100 score.`;
 
-  return [header, metaTelemetry, roleDirectives, brandSection, criticalSection, criticalItems, warningSection, warningItems, geoBoilerplate, closing].join('\n\n');
+  return [header, metaTelemetry, roleDirectives, criticalSection, criticalItems, warningSection, warningItems, geoBoilerplate, closing].join('\n\n');
 }
 
 // ============================================================================

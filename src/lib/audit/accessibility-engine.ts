@@ -35,6 +35,7 @@ export function runAccessibilityAudit(ctx: FetchedAuditContext): CategoryResult<
       impact: 'Assistive devices cannot properly configure pronunciation and screen reader dictionaries.',
       recommendation: 'Use standard language codes like "en" or "en-US".',
       targetFile: 'src/app/layout.tsx',
+      codeSnippet: `// Use standard BCP 47 language code\n<html lang="en" dir="ltr">\n  <body>{children}</body>\n</html>`,
       evidence: { currentLang: htmlLangAttr },
     });
   }
@@ -71,6 +72,8 @@ export function runAccessibilityAudit(ctx: FetchedAuditContext): CategoryResult<
       description: `Heading levels skip improperly: ${headingSkips.slice(0, 3).join(', ')}.`,
       impact: 'Screen reader users navigating by heading keys (H / 1-6) encounter an unpredictable document structure.',
       recommendation: 'Do not skip heading levels (e.g., use an <h2> before nesting an <h3>).',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Maintain sequential heading hierarchy -->\n<h1>Page Main Title</h1>\n  <h2>Section Topic Header</h2>\n    <h3>Subtopic Specifics</h3>`,
       evidence: { skips: headingSkips },
     });
   }
@@ -101,6 +104,8 @@ export function runAccessibilityAudit(ctx: FetchedAuditContext): CategoryResult<
       description: `Found ${missingAlts} image(s) with no \`alt\` attribute defined.`,
       impact: 'Screen readers announce raw image filenames or URL paths, creating a jarring experience for blind users.',
       recommendation: 'Provide meaningful alt descriptions, or alt="" if the image is strictly decorative.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Provide accessible alt text for screen readers -->\n<img src="/feature.png" alt="Descriptive summary of the visual diagram" />`,
     });
   }
 
@@ -147,6 +152,8 @@ export function runAccessibilityAudit(ctx: FetchedAuditContext): CategoryResult<
       description: `Detected ${unlabeledInputs} input/select/textarea element(s) with no associated <label> or aria-label.`,
       impact: 'Screen reader users cannot identify the purpose of form input fields.',
       recommendation: 'Associate inputs with a `<label htmlFor="id">` or add `aria-label="Input description"`.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Associate explicit label with form control -->\n<label htmlFor="url-input" className="sr-only">Target URL</label>\n<input id="url-input" name="url" type="url" placeholder="https://..." />`,
       evidence: { sampleElements: sampleUnlabeled },
     });
   }
@@ -180,7 +187,8 @@ export function runAccessibilityAudit(ctx: FetchedAuditContext): CategoryResult<
       description: `Found ${emptyButtons} button element(s) with no text content and no aria-label.`,
       impact: 'Screen readers read empty buttons as "button", giving blind users no indication of what clicking it will do.',
       recommendation: 'Add descriptive text, or `aria-label="Action name"` for icon-only buttons.',
-      codeSnippet: `<button aria-label="Close dialog">\n  <XIcon className="w-5 h-5" />\n</button>`,
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<button type="button" aria-label="Close dialog">\n  <XIcon className="w-5 h-5" />\n</button>`,
     });
   }
 
@@ -229,6 +237,7 @@ export function runAccessibilityAudit(ctx: FetchedAuditContext): CategoryResult<
       impact: 'Screen reader users cannot quickly jump past navigation to the main article or content body.',
       recommendation: 'Wrap the primary content in a `<main>` tag.',
       targetFile: 'src/app/layout.tsx',
+      codeSnippet: `// In src/app/layout.tsx\n<main className="flex-1 max-w-7xl mx-auto">\n  {children}\n</main>`,
     });
   }
 

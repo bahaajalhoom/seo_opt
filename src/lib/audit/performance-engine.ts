@@ -17,6 +17,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `TTFB was measured at ${ttfbMs}ms. Google Core Web Vitals targets under 200ms.`,
       impact: 'High TTFB stalls initial page rendering and degrades ranking on Google mobile indexes.',
       recommendation: 'Enable edge caching (Cloudflare / Vercel ISR) or optimize backend server response pipelines.',
+      targetFile: 'next.config.mjs',
+      codeSnippet: `// Enable stale-while-revalidate edge caching\nexport default {\n  headers: async () => [\n    {\n      source: '/:path*',\n      headers: [\n        { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' },\n      ],\n    },\n  ],\n};`,
       evidence: { ttfbMs },
     });
   } else if (ttfbMs > 400) {
@@ -29,6 +31,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `TTFB was measured at ${ttfbMs}ms (optimal is < 200ms).`,
       impact: 'Every 100ms delay in TTFB increases user bounce rates.',
       recommendation: 'Leverage stale-while-revalidate headers or route-level caching.',
+      targetFile: 'next.config.mjs',
+      codeSnippet: `// Configure aggressive CDN / Edge Cache headers\nexport default {\n  headers: async () => [\n    {\n      source: '/:path*',\n      headers: [\n        { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' },\n      ],\n    },\n  ],\n};`,
       evidence: { ttfbMs },
     });
   }
@@ -61,6 +65,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `Initial HTML is ${sizeKb} KB (recommended max is 100 KB).`,
       impact: 'Large HTML payloads delay the First Contentful Paint (FCP) and consume mobile bandwidth.',
       recommendation: 'Avoid inlining huge JSON state blobs or giant inline SVGs inside initial HTML.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `// Defer non-critical client heavy components\nimport dynamic from 'next/dynamic';\n\nconst HeavySection = dynamic(() => import('@/components/HeavySection'), {\n  ssr: false,\n  loading: () => <div className="h-48 bg-white/5 rounded-xl animate-pulse" />,\n});`,
       evidence: { sizeKb },
     });
   } else if (sizeKb > 100) {
@@ -73,6 +79,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `Initial HTML document is ${sizeKb} KB. Target under 100 KB for optimal speed.`,
       impact: 'Increases initial parser time and time-to-interactive.',
       recommendation: 'Code-split large components and streamline DOM depth.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `// Code-split dynamic client sub-components\nimport dynamic from 'next/dynamic';\nconst ClientModal = dynamic(() => import('@/components/ClientModal'), { ssr: false });`,
       evidence: { sizeKb },
     });
   }
@@ -106,6 +114,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `Document has ${totalElements} DOM nodes. Lighthouse marks > 1400 as failing.`,
       impact: 'Excessive DOM nodes exhaust mobile device memory and trigger layout thrashing.',
       recommendation: 'Flatten component hierarchies and virtualize long lists.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Flatten deeply nested wrapper divs into flat CSS grid -->\n<div className="grid grid-cols-1 md:grid-cols-3 gap-4">\n  {items.map((item) => <Card key={item.id} {...item} />)}\n</div>`,
       evidence: { totalElements, maxDepth },
     });
   } else if (totalElements > 800) {
@@ -118,6 +128,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `Document has ${totalElements} DOM elements (target under 800).`,
       impact: 'Increases style calculation times and layout computation latency.',
       recommendation: 'Remove redundant wrapper elements.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Eliminate redundant wrapper divs -->\n<section className="space-y-6">\n  {children}\n</section>`,
       evidence: { totalElements },
     });
   }
@@ -132,6 +144,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `Maximum DOM tree depth is ${maxDepth} levels.`,
       impact: 'Deep nesting creates excessive recalculate style calculation overhead.',
       recommendation: 'Refactor nested component containers into cleaner flex/grid structures.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Refactor multi-nested layers into direct flex parent -->\n<div className="flex flex-col sm:flex-row items-center gap-4">\n  <div>{primaryContent}</div>\n  <div>{secondaryAction}</div>\n</div>`,
       evidence: { maxDepth },
     });
   }
@@ -163,6 +177,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: 'Found synchronous external scripts in `<head>` lacking `defer`, `async`, or `type="module"`.',
       impact: 'Browsers halt HTML parsing and rendering completely while downloading and executing synchronous scripts.',
       recommendation: 'Add `defer` or `async` to scripts, or load third-party tags using Next.js `<Script strategy="afterInteractive" />`.',
+      targetFile: 'src/app/layout.tsx',
+      codeSnippet: `// Use Next.js Script with afterInteractive or lazyOnload\nimport Script from 'next/script';\n\n<Script\n  src="/vendor/analytics.js"\n  strategy="afterInteractive"\n/>`,
       evidence: { blockingScripts: blockingScripts.map((s) => s.src) },
     });
   }
@@ -204,6 +220,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
         description: `${legacyFormats} of ${totalImages} image(s) use legacy uncompressed formats instead of WebP or AVIF.`,
         impact: 'Modern WebP/AVIF images are 30-50% smaller at identical perceptual quality, cutting bandwidth.',
         recommendation: 'Use Next.js `<Image />` component which automatically serves modern WebP/AVIF formats.',
+        targetFile: 'src/app/page.tsx',
+        codeSnippet: `// Replace legacy <img> tags with optimized next/image\nimport Image from 'next/image';\n\n<Image\n  src="/showcase.webp"\n  alt="Product Showcase"\n  width={800}\n  height={500}\n  priority={false}\n/>`,
         evidence: { samples: unoptimizedSample },
       });
     }
@@ -219,6 +237,8 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
       description: `${imagesMissingDimensions} image(s) lack width or height attributes.`,
       impact: 'Causes layout shift (Cumulative Layout Shift - CLS) as images load, damaging user experience.',
       recommendation: 'Specify explicit width and height or use `next/image` with layout styling.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Set explicit width & height attributes to eliminate CLS layout shift -->\n<Image\n  src="/hero-banner.webp"\n  alt="Hero Feature Preview"\n  width={1200}\n  height={630}\n  className="w-full h-auto"\n/>`,
     });
   }
 

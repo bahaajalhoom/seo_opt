@@ -39,6 +39,7 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       impact: 'Short titles underutilize SERP real estate and miss high-intent keyword opportunities.',
       recommendation: 'Expand the title to 50-60 characters incorporating primary value proposition and brand.',
       targetFile: 'src/app/layout.tsx',
+      codeSnippet: `export const metadata: Metadata = {\n  title: '${titleVal ? titleVal + ' | Official High-Performance Platform' : 'Platform Name | High-Performance Web Audit & Intelligence'}',\n};`,
       evidence: { currentTitle: titleVal, length: titleLen },
     });
   } else if (titleLen > 65) {
@@ -53,6 +54,7 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       impact: 'Search engines will truncate the title with an ellipsis (...), hiding key brand or benefit words.',
       recommendation: 'Keep primary keywords in the first 50 characters and trim total length under 60 characters.',
       targetFile: 'src/app/layout.tsx',
+      codeSnippet: `export const metadata: Metadata = {\n  title: '${titleVal ? titleVal.slice(0, 55).trim() : 'Platform Name | Core Value Proposition'}',\n};`,
       evidence: { currentTitle: titleVal, length: titleLen },
     });
   }
@@ -89,6 +91,8 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       description: `Meta description is only ${descLen} characters. Target is 120-160 characters.`,
       impact: 'Short descriptions miss opportunities to provide rich context to searchers.',
       recommendation: 'Expand description to 120-160 characters.',
+      targetFile: 'src/app/layout.tsx',
+      codeSnippet: `export const metadata: Metadata = {\n  description: '${descVal ? descVal + ' Explore our high-precision benchmarking suite and immediate production code solutions.' : 'Engineered for high performance and real-time optimization. Discover our suite of benchmarking tools and comprehensive insights.'}',\n};`,
       evidence: { currentDescription: descVal, length: descLen },
     });
   } else if (descLen > 165) {
@@ -102,6 +106,8 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       description: `Meta description is ${descLen} characters (target max 160 characters).`,
       impact: 'Trailing copy will be cut off on desktop and mobile SERPs.',
       recommendation: 'Trim description to between 140 and 160 characters.',
+      targetFile: 'src/app/layout.tsx',
+      codeSnippet: `export const metadata: Metadata = {\n  description: '${descVal ? descVal.slice(0, 155).trim() : 'High-precision benchmarking and performance optimization for modern web platforms.'}',\n};`,
       evidence: { currentDescription: descVal, length: descLen },
     });
   }
@@ -143,6 +149,8 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
         description: `The canonical URL "${canonicalHref}" is not a valid absolute URL.`,
         impact: 'Invalid canonical tags are ignored by search engines.',
         recommendation: 'Ensure canonical URL is a fully qualified absolute HTTPS URL.',
+        targetFile: 'src/app/layout.tsx',
+        codeSnippet: `export const metadata: Metadata = {\n  alternates: {\n    canonical: '${finalUrl}',\n  },\n};`,
       });
     }
   }
@@ -164,6 +172,7 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       impact: 'This page is completely excluded from Google and Bing search indices.',
       recommendation: 'Remove "noindex" from production pages unless this is an intentional private dashboard.',
       targetFile: 'src/app/layout.tsx',
+      codeSnippet: `export const metadata: Metadata = {\n  robots: {\n    index: true,\n    follow: true,\n  },\n};`,
       evidence: { robotsMeta: robotsMetaRaw },
     });
   }
@@ -195,6 +204,7 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       impact: 'The `<h1>` heading defines the primary topic of the page for search engines and assistive technology.',
       recommendation: 'Add exactly one high-impact `<h1>` heading to the main content section.',
       targetFile: 'src/app/page.tsx',
+      codeSnippet: `<h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">\n  Your Primary Page Headline & Value Proposition\n</h1>`,
     });
   } else if (h1Elements.length > 1) {
     scoreDeduction += 6;
@@ -206,6 +216,8 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       description: `Found ${h1Elements.length} <h1> tags. Best practice is exactly one <h1> per page.`,
       impact: 'Multiple H1s dilute topic authority and confuse screen readers.',
       recommendation: 'Demote secondary H1 tags to <h2> and reserve a single <h1> for the page title.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Keep only one primary <h1>, convert secondary headlines to <h2> -->\n<h1 className="text-4xl font-black">{primaryHeadline}</h1>\n<h2 className="text-2xl font-bold">{secondarySectionTitle}</h2>`,
       evidence: { h1Headings: h1Elements },
     });
   }
@@ -222,6 +234,8 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       description: 'Page uses <h3> headings but contains zero <h2> headings.',
       impact: 'Breaking heading hierarchy confuses document outline parsing by crawlers and screen readers.',
       recommendation: 'Introduce an <h2> level before nesting <h3> elements.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Ensure logical heading hierarchy without skipping levels -->\n<h1>Main Page Topic</h1>\n  <h2>Primary Feature Section</h2>\n    <h3>Specific Sub-Feature Detail</h3>`,
     });
   }
 
@@ -305,6 +319,8 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       description: `Detected ${missingAlt} out of ${totalImages} image(s) lacking an alt attribute.`,
       impact: 'Search engines use image alt text for image search ranking and understanding page context.',
       recommendation: 'Add descriptive alt text to all informational images or alt="" for decorative graphics.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Add explicit alt attribute to all images -->\n<Image\n  src="/brand-hero.webp"\n  alt="Visual preview of platform analytics dashboard"\n  width={1200}\n  height={630}\n/>`,
       evidence: { missingCount: missingAlt, samples: sampleMissingAlt },
     });
   }

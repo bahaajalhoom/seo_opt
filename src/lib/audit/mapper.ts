@@ -29,29 +29,122 @@ const ARABIC_TITLE_MAP: Record<string, string> = {
   'Zero JSON-LD Structured Data Found': 'لا توجد بيانات منظمة بصيغة JSON-LD Schema',
   'Missing Organization Schema': 'مخطط المنظمة (Organization Schema) مفقود',
   'Missing WebSite Schema': 'مخطط الموقع الإلكتروني (WebSite Schema) مفقود',
+  'Thin Content Detected': 'كثافة محتوى منخفضة جداً (Thin Content)',
   'Low Information Density / Thin Content': 'كثافة محتوى منخفضة جداً (نصوص غير كافية للذكاء الاصطناعي)',
+  'Low Text-to-HTML Ratio': 'نسبة النصوص إلى كود HTML منخفضة جداً',
+  'Missing "About Us" Verification Link': 'رابط صفحة من نحن (About Us) مفقود',
+  'Missing Privacy Policy Link': 'رابط سياسة الخصوصية (Privacy Policy) مفقود',
+  'Lacks Modern Semantic HTML5 Tags': 'الصفحة تفتقر إلى وسوم HTML5 الدلالية الحديثة',
   'Zero Direct-Answer Passages Detected': 'غياب فقرات الإجابات المباشرة (Direct Answers)',
   'Weak E-E-A-T Signals (Missing Author/About/Contact)': 'إشارات موثوقية E-E-A-T ضعيفة (غياب صفحة من نحن أو بيانات الكاتب)',
   'Slow Time to First Byte (TTFB)': 'زمن استجابة السيرفر الأول (TTFB) بطيء',
+  'High Server Response Time (TTFB > 800ms)': 'زمن استجابة السيرفر بطيء جداً (TTFB > 800ms)',
+  'Server Response Time Could Be Faster (TTFB > 400ms)': 'زمن استجابة السيرفر يحتاج تحسين (TTFB > 400ms)',
+  'Text Compression Not Enabled': 'ضغط نصوص الاستجابة (Gzip/Brotli) غير مفعّل',
   'Oversized HTML Document Payload': 'حجم ملف HTML الأولي كبير جداً ويتجاوز المعدل الطبيعي',
   'HTML Document Weight is Borderline': 'حجم كود HTML قريب من الحد الأقصى الموصى به',
   'Excessive DOM Node Count (> 1400 nodes)': 'عدد عناصر شجرة DOM ضخم جداً مما يرهق المتصفح',
   'High DOM Node Count (> 800 nodes)': 'عدد عناصر DOM مرتفع ويتجاوز 800 عنصر',
   'Deep DOM Tree Nesting (> 32 levels)': 'تداخل عميق في بنية العناصر (أكثر من 32 مستوى)',
+  'Deeply Nested DOM Tree (> 32 levels)': 'تداخل عميق في بنية العناصر (أكثر من 32 مستوى)',
   'Blocking External Scripts in `<head>`': 'ملفات جافاسكربت تحجب عملية الرندرة في <head>',
+  'Legacy Image Formats Detected (PNG/JPG)': 'استخدام صيغ صور قديمة (PNG/JPG) بدلاً من WebP أو AVIF',
   'Unoptimized Legacy Image Formats': 'استخدام صيغ صور قديمة (PNG/JPG) بدلاً من WebP أو AVIF',
+  'Images Missing Explicit Width/Height Attributes': 'صور تفتقر لتحديد أبعاد العرض والارتفاع الصريحة (CLS)',
   'Missing `lang` Attribute on <html> Element': 'خاصية اللغة lang مفقودة في وسم <html> الأساسي',
   'Invalid `lang` Attribute Format on <html>': 'صيغة رمز اللغة غير مطابقة لمعايير BCP 47',
   'Broken Heading Sequence Hierarchy': 'خلل في التدرج المنطقي لعناوين الصفحة الهرمية',
   'Missing `<main>` Landmark Element': 'غياب وسم المعلم الدلالي <main> الرئيسي',
   'Viewport Prevents User Zooming': 'إعدادات viewport تمنع المستخدم من تكبير الشاشة (انتهاك للوصول)',
+  'Site Not Served Over Secure HTTPS': 'الموقع لا يستخدم بروتوكول HTTPS المشفر',
   'Insecure HTTP Protocol Detected': 'الموقع يستخدم بروتوكول HTTP غير المشفر بدلاً من HTTPS',
   'Missing Strict-Transport-Security (HSTS) Header': 'ترويسة أمان HSTS مفقودة',
+  'Missing HTTP Strict Transport Security (HSTS)': 'ترويسة أمان HSTS مفقودة',
+  'HSTS max-age is Too Short': 'مدة سياسة أمان HSTS قصيرة جداً (أقل من سنة)',
+  'Missing Content Security Policy (CSP)': 'ترويسة أمان المحتوى CSP غير مفعلة',
   'Missing Content-Security-Policy (CSP) Header': 'ترويسة أمان المحتوى CSP غير مفعلة',
+  'Missing X-Content-Type-Options: nosniff': 'ترويسة الحماية من تخمين أنواع الملفات nosniff مفقودة',
   'Missing X-Content-Type-Options: nosniff Header': 'ترويسة الحماية من تخمين أنواع الملفات nosniff مفقودة',
   'Missing X-Frame-Options Header': 'ترويسة الحماية من هجمات Clickjacking مفقودة',
   'Missing Referrer-Policy Header': 'ترويسة سياسة الإحالة Referrer-Policy مفقودة',
+  'Missing Permissions-Policy Header': 'ترويسة سياسة الصلاحيات Permissions-Policy مفقودة',
 };
+
+function resolveArabicTitle(titleEn: string): string {
+  if (ARABIC_TITLE_MAP[titleEn]) {
+    return ARABIC_TITLE_MAP[titleEn];
+  }
+
+  // Dynamic template matching
+  if (/Render-Blocking Script/i.test(titleEn)) {
+    return 'ملفات جافاسكربت تحجب عملية الرندرة في <head>';
+  }
+  if (/Image\(s\)\s+Missing alt/i.test(titleEn)) {
+    return 'صور تفتقر لخاصية الوصف البديل (alt)';
+  }
+  if (/Form Control\(s\)\s+Lack/i.test(titleEn)) {
+    return 'حقول إدخال تفتقر إلى عناوين دلالية (Accessible Labels)';
+  }
+  if (/Button\(s\)\s+Lack Accessible Text/i.test(titleEn)) {
+    return 'أزرار تفتقر إلى نصوص توضيحية أو aria-label';
+  }
+  if (/Unsafe External Link/i.test(titleEn)) {
+    return 'روابط خارجية تفتقر إلى حماية rel="noopener"';
+  }
+  if (/Thin Content/i.test(titleEn)) {
+    return 'كثافة محتوى منخفضة جداً (Thin Content)';
+  }
+  if (/TTFB > 800/i.test(titleEn)) {
+    return 'زمن استجابة السيرفر بطيء جداً (TTFB > 800ms)';
+  }
+  if (/TTFB > 400/i.test(titleEn)) {
+    return 'زمن استجابة السيرفر يحتاج تحسين (TTFB > 400ms)';
+  }
+  if (/Content Security Policy/i.test(titleEn)) {
+    return 'ترويسة أمان المحتوى CSP غير مفعلة';
+  }
+  if (/X-Frame-Options/i.test(titleEn)) {
+    return 'ترويسة الحماية من هجمات Clickjacking مفقودة';
+  }
+  if (/nosniff/i.test(titleEn)) {
+    return 'ترويسة الحماية من تخمين أنواع الملفات nosniff مفقودة';
+  }
+  if (/Referrer-Policy/i.test(titleEn)) {
+    return 'ترويسة سياسة الإحالة Referrer-Policy مفقودة';
+  }
+  if (/Permissions-Policy/i.test(titleEn)) {
+    return 'ترويسة سياسة الصلاحيات Permissions-Policy مفقودة';
+  }
+  if (/HSTS/i.test(titleEn)) {
+    return 'ترويسة أمان HSTS مفقودة أو مدتها قصيرة';
+  }
+  if (/Legacy Image Format/i.test(titleEn)) {
+    return 'استخدام صيغ صور قديمة (PNG/JPG) بدلاً من WebP أو AVIF';
+  }
+  if (/Missing Explicit Width\/Height/i.test(titleEn)) {
+    return 'صور تفتقر لأبعاد العرض والارتفاع المحددة (CLS)';
+  }
+  if (/About Us/i.test(titleEn)) {
+    return 'رابط صفحة من نحن (About Us) مفقود';
+  }
+  if (/Privacy Policy/i.test(titleEn)) {
+    return 'رابط سياسة الخصوصية (Privacy Policy) مفقود';
+  }
+  if (/Semantic HTML/i.test(titleEn)) {
+    return 'الصفحة تفتقر إلى وسوم HTML5 الدلالية الحديثة';
+  }
+  if (/Text-to-HTML/i.test(titleEn)) {
+    return 'نسبة النصوص إلى كود HTML منخفضة';
+  }
+  if (/DOM Node Count/i.test(titleEn)) {
+    return 'عدد عناصر DOM مرتفع ويتجاوز الحد الموصى به';
+  }
+  if (/DOM Tree/i.test(titleEn)) {
+    return 'تداخل عميق في بنية العناصر الشجرية (DOM Nesting)';
+  }
+
+  return titleEn;
+}
 
 function normalizeSeverity(sev: string): IssueSeverity {
   if (sev === 'critical') return 'critical';
@@ -151,7 +244,7 @@ export function mapComprehensiveToAuditResult(comp: ComprehensiveAuditResult): A
 
   const issues: AuditIssue[] = rawIssues.map((issue) => {
     const titleEn = issue.title || issue.titleEn || 'Optimization Opportunity';
-    const titleAr = issue.titleAr || ARABIC_TITLE_MAP[titleEn] || titleEn;
+    const titleAr = issue.titleAr || resolveArabicTitle(titleEn);
     const descriptionEn = issue.description || issue.descriptionEn || '';
     const descriptionAr = issue.descriptionAr || descriptionEn;
     const impactEn = issue.impact || issue.impactEn || 'Impacts search visibility and ranking.';

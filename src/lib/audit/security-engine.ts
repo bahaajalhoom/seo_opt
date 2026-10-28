@@ -10,6 +10,7 @@ export function runSecurityAudit(ctx: FetchedAuditContext): CategoryResult<Secur
   const isHttps = finalUrl.toLowerCase().startsWith('https://');
   if (!isHttps) {
     scoreDeduction += 40;
+    const cleanHost = finalUrl.replace(/^https?:\/\//i, '').split('/')[0] || 'yourdomain.com';
     issues.push({
       id: 'sec-insecure-http',
       category: 'security',
@@ -18,6 +19,8 @@ export function runSecurityAudit(ctx: FetchedAuditContext): CategoryResult<Secur
       description: `The URL "${finalUrl}" is served over plaintext HTTP.`,
       impact: 'Passwords, cookies, and traffic can be intercepted via man-in-the-middle (MITM) attacks. Chrome marks the site "Not Secure".',
       recommendation: 'Enforce automatic HTTP to HTTPS redirection and obtain an SSL/TLS certificate.',
+      targetFile: 'next.config.mjs',
+      codeSnippet: `// Force HTTPS redirect at reverse-proxy or edge level\nexport default {\n  async redirects() {\n    return [\n      {\n        source: '/:path*',\n        has: [{ type: 'header', key: 'x-forwarded-proto', value: 'http' }],\n        destination: 'https://${cleanHost}/:path*',\n        permanent: true,\n      },\n    ];\n  },\n};`,
     });
   }
 
@@ -57,6 +60,8 @@ export function runSecurityAudit(ctx: FetchedAuditContext): CategoryResult<Secur
           description: `Current max-age is ${hstsMaxAge} seconds (recommended is 31536000 seconds / 1 year).`,
           impact: 'Short HSTS policies leave users susceptible to downgrade attacks and SSL stripping.',
           recommendation: 'Increase HSTS max-age to 31536000 for production domains.',
+          targetFile: 'next.config.mjs',
+          codeSnippet: `{\n  key: 'Strict-Transport-Security',\n  value: 'max-age=31536000; includeSubDomains; preload',\n}`,
         });
       }
     }
@@ -183,6 +188,8 @@ export function runSecurityAudit(ctx: FetchedAuditContext): CategoryResult<Secur
       description: `Detected ${unsafeCount} link(s) opening a new tab without \`rel="noopener"\` or \`rel="noreferrer"\`.`,
       impact: 'Vulnerable to "reverse tabnabbing": the opened page can access `window.opener.location` and redirect your users to a phishing replica.',
       recommendation: 'Always append `rel="noopener noreferrer"` to external links opening in `_blank`.',
+      targetFile: 'src/app/page.tsx',
+      codeSnippet: `<!-- Append rel="noopener noreferrer" to external links -->\n<a href="https://example.com" target="_blank" rel="noopener noreferrer">\n  External Resource\n</a>`,
       evidence: { sampleUnsafeLinks: unsafeSamples },
     });
   }
