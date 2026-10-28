@@ -1,22 +1,48 @@
+// ============================================================================
+// 1. IMPORTS
+// ============================================================================
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { runComprehensiveAudit, validateUrlSafety } from '@/lib/audit';
 import { mapComprehensiveToAuditResult } from '@/lib/audit/mapper';
 import type { ProblemDetails } from '@/types/audit';
 
+// ============================================================================
+// 2. CONFIGURATION & CONSTANTS (EASY EDIT ZONE)
+// ============================================================================
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const AUDIT_API_CONFIG = {
+  timeoutMs: 15_000,
+  errorTypePrefix: 'https://errors.crawlix.dev/',
+} as const;
+
+// ============================================================================
+// 3. TYPES & INTERFACES
+// ============================================================================
+interface InvalidParam {
+  name: string;
+  reason: string;
+}
+
+// ============================================================================
+// 4. HELPER FUNCTIONS
+// ============================================================================
+/**
+ * Factory for RFC 9457 compliant problem responses with structured telemetry.
+ */
 function createProblemResponse(
   status: number,
   title: string,
   detail: string,
   instance: string,
   requestId: string,
-  invalidParams?: Array<{ name: string; reason: string }>
+  invalidParams?: InvalidParam[]
 ): NextResponse<ProblemDetails> {
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const problem: ProblemDetails = {
-    type: `https://errors.seoopt.dev/${title.toLowerCase().replace(/\s+/g, '-')}`,
+    type: `${AUDIT_API_CONFIG.errorTypePrefix}${slug}`,
     title,
     status,
     detail,
@@ -35,10 +61,32 @@ function createProblemResponse(
   });
 }
 
+/**
+ * Normalizes input URL string into a valid absolute URL instance.
+ */
+function parseTargetUrlCandidate(inputUrl: string): URL | null {
+  const trimmed = inputUrl.trim();
+  const candidate =
+    trimmed.startsWith('http://') || trimmed.startsWith('https://')
+      ? trimmed
+      : `https://${trimmed}`;
+
+  try {
+    const parsed = new URL(candidate);
+    return parsed.hostname && parsed.hostname.includes('.') ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+// ============================================================================
+// 5. POST ROUTE HANDLER
+// ============================================================================
 export async function POST(req: NextRequest) {
   const requestId = crypto.randomUUID();
   const instanceUrl = req.nextUrl.pathname;
 
+  // 1. Parse JSON body
   let body: unknown;
   try {
     body = await req.json();
@@ -52,6 +100,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // 2. Validate object shape
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return createProblemResponse(
       400,
@@ -64,6 +113,7 @@ export async function POST(req: NextRequest) {
 
   const { url } = body as { url?: unknown };
 
+  // 3. Validate url presence
   if (typeof url !== 'string' || !url.trim()) {
     return createProblemResponse(
       400,
@@ -75,61 +125,61 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Validate URL syntax
-  let parsedUrl: URL;
-  try {
-    const candidate = url.trim().startsWith('http://') || url.trim().startsWith('https://')
-      ? url.trim()
-      : `https://${url.trim()}`;
-    parsedUrl = new URL(candidate);
-  } catch {
+  // 4. Validate URL syntax
+  const parsedUrl = parseTargetUrlCandidate(url);
+  if (!parsedUrl) {
     return createProblemResponse(
       400,
       'Invalid URL Format',
-      `"${url}" could not be parsed as a valid URL.`,
+      `"${url}" could not be parsed as a valid web address.`,
       instanceUrl,
       requestId,
       [{ name: 'url', reason: 'Must be a valid web address, e.g., https://example.com' }]
     );
   }
 
-  // SSRF and private IP protection
+  // 5. Enforce SSRF & Private Network Guards
   const safetyCheck = validateUrlSafety(parsedUrl.toString());
   if (!safetyCheck.valid) {
     return createProblemResponse(
       422,
       'Disallowed Target Host',
-      safetyCheck.error ?? 'Auditing this target is disallowed for security.',
+      safetyCheck.error ?? 'Auditing this target host is disallowed for network security.',
       instanceUrl,
       requestId,
       [{ name: 'url', reason: safetyCheck.error ?? 'Forbidden IP/host' }]
     );
   }
 
+  // 6. Execute Multi-Vector Audit
   try {
     const auditResult = await runComprehensiveAudit(parsedUrl.toString(), {
-      timeoutMs: 15_000,
+      timeoutMs: AUDIT_API_CONFIG.timeoutMs,
     });
     const frontendAudit = mapComprehensiveToAuditResult(auditResult);
 
-    return NextResponse.json({ ...frontendAudit, comprehensive: auditResult }, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'X-Request-Id': requestId,
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-      },
-    });
+    return NextResponse.json(
+      { ...frontendAudit, comprehensive: auditResult },
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'X-Request-Id': requestId,
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      }
+    );
   } catch (err) {
     const error = err as Error;
 
-    console.error('Audit Error:', error);
     // Timeout failure
     if (error.message.includes('timeout') || error.name === 'AbortError') {
       return createProblemResponse(
         504,
         'Target Gateway Timeout',
-        `The target server at "${parsedUrl.origin}" did not respond within the 15-second timeout window.`,
+        `The target server at "${parsedUrl.origin}" did not respond within the ${
+          AUDIT_API_CONFIG.timeoutMs / 1000
+        }-second window.`,
         instanceUrl,
         requestId
       );
@@ -150,11 +200,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generic internal error
+    // Generic internal fallback error
     return createProblemResponse(
       500,
       'Audit Engine Internal Error',
-      'An unexpected error occurred while analyzing the target URL. Reference the requestId for logs.',
+      'An unexpected error occurred while analyzing the target URL. Reference the requestId for server logs.',
       instanceUrl,
       requestId
     );

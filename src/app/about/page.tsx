@@ -1,23 +1,115 @@
 'use client';
 
+// ============================================================================
+// 1. IMPORTS
+// ============================================================================
 import * as React from 'react';
-import { AuditHeader } from '@/components/AuditHeader';
-import { AuditFooter } from '@/components/AuditFooter';
-import { SupportedLang } from '@/types/audit';
+import Link from 'next/link';
 import {
   Award,
   Cpu,
   Terminal,
-  Layers,
   Sparkles,
   ArrowLeft,
   CheckCircle2,
   ShieldCheck,
-  Code2,
   Globe2,
 } from 'lucide-react';
-import Link from 'next/link';
+import { AuditHeader } from '@/components/AuditHeader';
+import { AuditFooter } from '@/components/AuditFooter';
+import { SupportedLang } from '@/types/audit';
 
+// ============================================================================
+// 2. CONFIGURATION & CONSTANTS (EASY EDIT ZONE)
+// ============================================================================
+// Edit the architect pillars, credentials, and verification points here.
+const ARCHITECT_CREDENTIALS = {
+  name: 'Ahmad Jalhoom · أحمد جلهوم',
+  portfolioUrl: 'https://ahmedsaleh.website',
+  roleAr: 'مهندس نظم الذكاء الاصطناعي وبنية الويب المتقدمة',
+  roleEn: 'Principal AI & Web Distributed Systems Architect',
+  versionBadge: 'CRAWLIX PRO',
+  establishedYear: '2026',
+} as const;
+
+const ARCHITECTURAL_PILLARS = [
+  {
+    id: 'node24',
+    icon: Cpu,
+    titleAr: 'محرك Node.js 24 الأصيل',
+    titleEn: 'Native Node.js 24 Engine',
+    descAr:
+      'فحص شبكي متوازي حقيقي بدون أي بيانات وهمية، مع حماية أمنية من هجمات SSRF وتحليل Cheerio عالي السرعة.',
+    descEn:
+      'True concurrent network inspection with zero simulated fallbacks, sub-second TTFB telemetry, and built-in SSRF guards.',
+  },
+  {
+    id: 'geo',
+    icon: Sparkles,
+    titleAr: 'هندسة الـ GEO وعصر الـ AI Search',
+    titleEn: 'GEO & AI Search Grounding',
+    descAr:
+      'دعم متكامل لمواصفة llms.txt الجديدة وتحليل عميق لأذونات GPTBot و PerplexityBot ومخططات Schema.org.',
+    descEn:
+      'Full compliance with the emerging /llms.txt standard, multi-agent bot directives, and Schema.org knowledge graph parsing.',
+  },
+  {
+    id: 'repair',
+    icon: ShieldCheck,
+    titleAr: 'مُولّد الإصلاح الآلي 100%',
+    titleEn: '100% Score AI Master Repair Prompt',
+    descAr:
+      'توليد برومبت هندسي محدد وحتمي مخصص للنماذج الذكية (Claude 3.7 / ChatGPT-4o / Cursor) لمعالجة كافة العيوب فوراً.',
+    descEn:
+      'Deterministic instruction payloads engineered for Claude 3.7 and Cursor to patch all detected vulnerabilities in one prompt.',
+  },
+  {
+    id: 'noslop',
+    icon: CheckCircle2,
+    titleAr: 'تصميم استوديو 100/100 مكافح للـ Slop',
+    titleEn: '100% Anti-Slop Studio Discipline',
+    descAr:
+      'واجهة مستخدم احترافية بنظام أوبسيديان 90/10 وزمرد الليزر، خطوط عربية متصلة منضبطة، وانعدام تام للانزياح البصري (CLS = 0).',
+    descEn:
+      'Zero tacky AI gradients, 90/10 obsidian physics, tabular typography, and rock-solid CLS = 0 layout stability.',
+  },
+] as const;
+
+// ============================================================================
+// 3. TYPES & INTERFACES
+// ============================================================================
+interface PillarCardProps {
+  pillar: (typeof ARCHITECTURAL_PILLARS)[number];
+  isAr: boolean;
+}
+
+// ============================================================================
+// 4. HELPER FUNCTIONS
+// ============================================================================
+// (Pure display formatters)
+
+// ============================================================================
+// 5. SUB-COMPONENTS
+// ============================================================================
+function PillarCard({ pillar, isAr }: PillarCardProps) {
+  const Icon = pillar.icon;
+  const title = isAr ? pillar.titleAr : pillar.titleEn;
+  const desc = isAr ? pillar.descAr : pillar.descEn;
+
+  return (
+    <div className="surface-hud rounded-2xl p-5 space-y-2.5">
+      <div className="size-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+        <Icon className="size-4.5" />
+      </div>
+      <h3 className="text-sm font-bold text-white">{title}</h3>
+      <p className="text-xs text-zinc-400 leading-relaxed">{desc}</p>
+    </div>
+  );
+}
+
+// ============================================================================
+// 6. MAIN COMPONENT
+// ============================================================================
 export default function AboutPage() {
   const [lang, setLang] = React.useState<SupportedLang>('ar');
   const isAr = lang === 'ar';
@@ -36,12 +128,17 @@ export default function AboutPage() {
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-12">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-          <Link href="/" className="hover:text-emerald-400 transition-colors inline-flex items-center gap-1">
+          <Link
+            href="/"
+            className="hover:text-emerald-400 transition-colors inline-flex items-center gap-1"
+          >
             <ArrowLeft className="size-3.5 rtl:rotate-180" />
             <span>{isAr ? 'العودة لمنصة الفحص' : 'Return to Auditor'}</span>
           </Link>
           <span>/</span>
-          <span className="text-zinc-300">{isAr ? 'عن المؤسس والمنصة' : 'About Architect & Platform'}</span>
+          <span className="text-zinc-300">
+            {isAr ? 'عن المؤسس والمنصة' : 'About Architect & Platform'}
+          </span>
         </div>
 
         {/* Hero Section: Creator Spotlight */}
@@ -56,19 +153,17 @@ export default function AboutPage() {
                   {isAr ? 'المطور والمهندس المؤسس' : 'Principal Engineer & Creator'}
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  Ahmad Jalhoom · أحمد جلهوم
+                  {ARCHITECT_CREDENTIALS.name}
                 </h1>
                 <p className="text-xs text-zinc-400 font-mono mt-0.5">
-                  {isAr
-                    ? 'مهندس نظم الذكاء الاصطناعي وبنية الويب المتقدمة'
-                    : 'Principal AI & Web Distributed Systems Architect'}
+                  {isAr ? ARCHITECT_CREDENTIALS.roleAr : ARCHITECT_CREDENTIALS.roleEn}
                 </p>
               </div>
             </div>
 
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-zinc-300">
               <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>CRAWLIX PRO</span>
+              <span>{ARCHITECT_CREDENTIALS.versionBadge}</span>
             </div>
           </div>
 
@@ -94,62 +189,33 @@ export default function AboutPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="surface-hud rounded-2xl p-5 space-y-2.5">
-              <div className="size-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <Cpu className="size-4.5" />
-              </div>
-              <h3 className="text-sm font-bold text-white">
-                {isAr ? 'محرك Node.js 24 الأصيل' : 'Native Node.js 24 Engine'}
-              </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                {isAr
-                  ? 'فحص شبكي متوازي حقيقي بدون أي بيانات وهمية، مع حماية أمنية من هجمات SSRF وتحليل Cheerio عالي السرعة.'
-                  : 'True concurrent network inspection with zero simulated fallbacks, sub-second TTFB telemetry, and built-in SSRF guards.'}
-              </p>
-            </div>
+            {ARCHITECTURAL_PILLARS.map((pillar) => (
+              <PillarCard key={pillar.id} pillar={pillar} isAr={isAr} />
+            ))}
+          </div>
+        </div>
 
-            <div className="surface-hud rounded-2xl p-5 space-y-2.5">
-              <div className="size-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <Sparkles className="size-4.5" />
-              </div>
-              <h3 className="text-sm font-bold text-white">
-                {isAr ? 'هندسة الـ GEO وعصر الـ AI Search' : 'GEO & AI Search Grounding'}
-              </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                {isAr
-                  ? 'دعم متكامل لمواصفة llms.txt الجديدة وتحليل عميق لأذونات GPTBot و PerplexityBot ومخططات Schema.org.'
-                  : 'Comprehensive support for the /llms.txt standard, stacked robots.txt AI directives, and rich Schema.org validation.'}
-              </p>
-            </div>
-
-            <div className="surface-hud rounded-2xl p-5 space-y-2.5">
-              <div className="size-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <Code2 className="size-4.5" />
-              </div>
-              <h3 className="text-sm font-bold text-white">
-                {isAr ? 'برومبت الإصلاح الشامل 100%' : '100% Score Master AI Prompt'}
-              </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                {isAr
-                  ? 'توليد تلقائي لبرومبت هندسي منظم يوجه نماذج Claude و Cursor و ChatGPT لسد جميع الثغرات في خطوة واحدة.'
-                  : 'Deterministic, ready-to-run prompt generator that outputs full code patches and configs to achieve perfect 100% scores.'}
-              </p>
-            </div>
-
-            <div className="surface-hud rounded-2xl p-5 space-y-2.5">
-              <div className="size-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <Globe2 className="size-4.5" />
-              </div>
-              <h3 className="text-sm font-bold text-white">
-                {isAr ? 'عمارة خالية من الابتذال (Anti-Slop)' : 'Studio-Grade Industrial Craft'}
-              </h3>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                {isAr
-                  ? 'واجهة تفاعلية مصممة بدقة استوديوهات التصميم العالمية بنسبة ألوان 90/10 وانعدام تام للاهتزاز (CLS = 0).'
-                  : 'Strict adherence to /using-frontend-noslop: zero gradient text, high-density HUD telemetry, and zero layout shift.'}
-              </p>
+        {/* Portfolio & Direct Attribution Banner */}
+        <div className="surface-hud rounded-2xl p-6 border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Globe2 className="size-5 text-emerald-400" />
+            <div>
+              <span className="text-sm font-bold text-white block">
+                {isAr ? 'الملف الشخصي للمهندس أحمد جلهوم' : 'Architect Portfolio & Works'}
+              </span>
+              <span className="text-xs font-mono text-zinc-400">
+                {ARCHITECT_CREDENTIALS.portfolioUrl}
+              </span>
             </div>
           </div>
+          <a
+            href={ARCHITECT_CREDENTIALS.portfolioUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] text-xs font-mono text-zinc-200 transition-colors"
+          >
+            {isAr ? 'زيارة الموقع الشخصي' : 'Visit Portfolio'}
+          </a>
         </div>
       </main>
 
