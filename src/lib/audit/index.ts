@@ -4,6 +4,7 @@ import { runGeoAudit } from './geo-engine';
 import { runPerformanceAudit } from './performance-engine';
 import { runAccessibilityAudit } from './accessibility-engine';
 import { runSecurityAudit } from './security-engine';
+import { runUiUxAudit, extractDomColors } from './uiux-engine';
 import { generateMasterAiPrompt } from './prompt-generator';
 import type { ComprehensiveAuditResult, AuditGrade } from '../../types/audit';
 
@@ -90,6 +91,7 @@ export async function runComprehensiveAudit(
   const passedCount = allIssues.filter((i) => i.severity === 'good' || i.severity === 'passed').length;
 
   const executionTimeMs = Math.round(performance.now() - startTime);
+  const extractedColors = extractDomColors(context.html || '');
 
   const baseResult: Omit<ComprehensiveAuditResult, 'repairPrompt'> = {
     targetUrl: normalizedUrl,
@@ -97,6 +99,7 @@ export async function runComprehensiveAudit(
     canonicalUrl: seoResult.metrics.canonical.value,
     overallScore,
     grade,
+    extractedColors,
     summary: {
       totalIssues: allIssues.length,
       criticalCount,

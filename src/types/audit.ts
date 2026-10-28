@@ -1,3 +1,5 @@
+import type { ExtractedColor } from './uiux';
+
 export type IssueSeverity = 'critical' | 'warning' | 'passed';
 export type AuditSeverity = 'critical' | 'warning' | 'info' | 'good' | 'passed';
 
@@ -322,6 +324,7 @@ export interface ComprehensiveAuditResult {
     security: CategoryResult<SecurityMetrics>;
   };
   repairPrompt: RepairPromptResult;
+  extractedColors?: ExtractedColor[];
 }
 
 // -----------------------------------------------------------------------------
@@ -391,6 +394,7 @@ export interface AuditResult {
   geoDetails: GeoAuditDetails;
   issues: AuditIssue[];
   metrics: AuditMetrics;
+  extractedColors?: ExtractedColor[];
 }
 
 export type SupportedLang = 'ar' | 'en';

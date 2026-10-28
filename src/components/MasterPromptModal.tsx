@@ -12,10 +12,11 @@ import {
   X,
   Target,
   FileCode,
+  Palette,
 } from 'lucide-react';
 import { AuditResult, SupportedLang } from '@/types/audit';
 import { translations } from '@/lib/translations';
-import { generateMasterRepairPrompt } from '@/lib/promptGenerator';
+import { generateMasterRepairPrompt, extractBrandTokens } from '@/lib/promptGenerator';
 
 // ============================================================================
 // 2. CONFIGURATION & CONSTANTS (EASY EDIT ZONE)
@@ -225,6 +226,10 @@ export function MasterPromptModal({
   // --------------------------------------------------------------------------
   // DERIVED STATE
   // --------------------------------------------------------------------------
+  const brandTokens = React.useMemo(() => {
+    return extractBrandTokens(audit.extractedColors);
+  }, [audit.extractedColors]);
+
   const generatedPrompt = React.useMemo(() => {
     return generateMasterRepairPrompt(audit, promptLang);
   }, [audit, promptLang]);
@@ -269,6 +274,32 @@ export function MasterPromptModal({
           onCopy={handleCopy}
           onDownload={handleDownload}
         />
+
+        {/* Brand Tokens Extracted Strip */}
+        {audit.extractedColors && audit.extractedColors.length > 0 && (
+          <div className="px-5 sm:px-6 py-2.5 bg-[#080A0F] border-b border-white/[0.06] flex items-center justify-between text-xs flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <Palette className="size-3.5 text-emerald-400" />
+              <span className="text-[11px] font-mono text-zinc-400">
+                {lang === 'ar' ? 'ألوان الموقع المعتمدة في البرومبت:' : 'Extracted Brand Palette in Prompt:'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap text-[11px] font-mono">
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.08] text-zinc-300">
+                <span className="size-2 rounded-full" style={{ backgroundColor: brandTokens.accent }} />
+                <span>Accent: {brandTokens.accent}</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.08] text-zinc-300">
+                <span className="size-2 rounded-full" style={{ backgroundColor: brandTokens.canvasBg }} />
+                <span>Canvas: {brandTokens.canvasBg}</span>
+              </span>
+              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/[0.04] border border-white/[0.08] text-zinc-300">
+                <span className="size-2 rounded-full" style={{ backgroundColor: brandTokens.surfaceBg }} />
+                <span>Surface: {brandTokens.surfaceBg}</span>
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Prompt Output Viewport */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 bg-[#06070A] font-mono text-xs text-zinc-300 leading-relaxed space-y-4 select-all text-start" dir="ltr">

@@ -227,5 +227,6 @@ export function mapComprehensiveToAuditResult(comp: ComprehensiveAuditResult): A
     },
     issues,
     metrics,
+    extractedColors: comp.extractedColors,
   };
 }

@@ -22,11 +22,14 @@ import {
   SlidersHorizontal,
   Code2,
   FileCode2,
+  Download,
+  FileText,
 } from 'lucide-react';
 import { AuditHeader } from '@/components/AuditHeader';
 import { AuditFooter } from '@/components/AuditFooter';
 import { SupportedLang } from '@/types/audit';
 import { translations } from '@/lib/translations';
+import { extractBrandTokens } from '@/lib/promptGenerator';
 import type {
   UiUxAuditResult,
   UiUxPrescription,
@@ -138,13 +141,16 @@ function getSeverityBadgeStyle(sev: PrescriptionSeverity): {
 }
 
 /**
- * Synthesizes all actionable prescriptions into an AI-ready master refactoring prompt.
+ * Synthesizes all actionable prescriptions into an AI-ready master refactoring prompt,
+ * tailored directly to the site's authentic extracted brand palette and detected issues.
  */
 function buildPrescriptionsAiPrompt(
   result: UiUxAuditResult,
   prescriptions: UiUxPrescription[],
   isAr: boolean
 ): string {
+  const tokens = extractBrandTokens(result.extractedColors);
+
   const items = prescriptions
     .map((p, idx) => {
       const title = isAr ? p.titleAr : p.titleEn;
@@ -159,33 +165,83 @@ function buildPrescriptionsAiPrompt(
           : '';
 
       return `### ${idx + 1}. [${p.category.toUpperCase()}] ${title} (${p.severity.toUpperCase()})
-- **${isAr ? 'التشخيص' : 'Diagnosis'}:** ${diag}
-- **${isAr ? 'التوجيه المباشر (اعمل هيك وسوي هيك)' : 'Action Directive'}:** ${action}
+- **${isAr ? 'التشخيص الهندسي' : 'Diagnosis'}:** ${diag}
+- **${isAr ? 'التوجيه التنفيذي (اعمل هيك وسوي هيك)' : 'Action Directive'}:** ${action}
 - **${isAr ? 'القاعدة التصميمية' : 'Design Rule'}:** ${p.designPrinciple}${vals}${snippet}`;
     })
     .join('\n\n');
 
   const header = isAr
-    ? `# 🎨 برومبت الإصلاح الشامل لتجربة وواجهة المستخدم (UI/UX) - موقع: ${result.domain}
+    ? `# 🎨 برومبت الإصلاح الشامل لتجربة وواجهة المستخدم (UI/UX) - مخصص لموقع: ${result.domain}
 النتيجة الحالية: ${result.overallScore}/100 (${result.verdictAr})
 
 أنت مهندس تصميم وواجهات رئيسي (Principal UI/UX & Frontend Architect).
 مهمتك تطبيق الحلول والتوجيهات التصميمية التالية بدقة واحترافية:
-1. تطبيق قاعدة 90/10 للألوان: 90% ألوان محايدة هادئة و 10% لون تمييز واحد فقط للـ CTAs.
+1. تطبيق قاعدة 90/10 للألوان المعتمدة أدناه.
 2. ضمان تحقيق نسبة التباين WCAG 2.1 AA (4.5:1 على الأقل لكافة النصوص).
 3. ضبط مساحات النقر للأزرار (Touch Targets لا تقل عن 44x44 بكسل).
 4. ضبط ارتفاع الأسطر للفقرات (line-height: 1.625) لتسهيل القراءة.`
-    : `# 🎨 UI/UX MASTER REFACTORING PROMPT - Target: ${result.domain}
+    : `# 🎨 TAILORED UI/UX REFACTORING PROMPT - Target: ${result.domain}
 Current Score: ${result.overallScore}/100 (${result.verdictEn})
 
 You are a Principal UI/UX & Frontend Architect.
 Your task is to implement all of the following design directives with zero slop:
-1. Enforce the 90/10 color rule (90% neutral surfaces, 10% purposeful accent for CTAs).
+1. Enforce the 90/10 color rule using the authentic brand tokens below.
 2. Ensure WCAG 2.1 AA contrast ratio (at least 4.5:1 on all text).
 3. Ensure Fitts's Law compliance with minimum 44x44px touch targets.
 4. Set paragraph line-height to 1.625 for optimal reading rhythm.`;
 
-  return `${header}\n\n## 🛠️ ${isAr ? 'سجل التوجيهات الهندسية المطلوب تنفيذها' : 'Actionable Prescriptions'}:\n\n${items}`;
+  const brandSection = isAr
+    ? `## 🎨 1. الهوية البصرية ونظام الألوان المعتمد لموقعك (90/10 Brand Tokens):
+تم استخراج هذه الألوان الحقيقية مباشرة من كود الصفحة لضمان احتفاظ موقعك بهويته البصرية دون ألوان عشوائية:
+- **لون التمييز الرئيسي (Brand Accent):** \`${tokens.accent}\` (للأزرار الرئيسية CTAs والروابط النشطة)
+- **لون الخلفية والكانفاس الأساسي (Canvas Background):** \`${tokens.canvasBg}\` (يشكل 90% من المساحة)
+- **أسطح البطاقات والحاويات (Surface Cards):** \`${tokens.surfaceBg}\`
+- **لون النصوص الأساسية (Primary Text):** \`${tokens.textPrimary}\`
+- **لون النصوص المكتومة (Muted Text):** \`${tokens.textMuted}\` (بنسبة تباين WCAG 2.1 AA $\\ge 4.5:1$)
+
+### كود متغيرات الثيم وتوكنز Tailwind / CSS Variables المبني على ألوانك:
+\`\`\`css
+:root {
+  --brand-accent: ${tokens.accent};
+  --bg-canvas: ${tokens.canvasBg};
+  --bg-surface: ${tokens.surfaceBg};
+  --text-primary: ${tokens.textPrimary};
+  --text-muted: ${tokens.textMuted};
+  --border-subtle: rgba(255, 255, 255, 0.08);
+}
+\`\`\`
+
+**تعليمات صارمة للذكاء الاصطناعي:**
+- التزم حصرياً بالألوان المستخرجة أعلاه في كافة الحلول والتنسيقات ولا تبتكر ألواناً عشوائية.
+- طبّق قاعدة 90/10 للألوان: 90% أسطح محايدة هادئة و 10% لون تمييز موحد للـ CTAs.`
+    : `## 🎨 1. Authentic Brand Palette & 90/10 Design System Tokens:
+Extracted directly from the site DOM to guarantee brand preservation without hallucinations:
+- **Primary Brand Accent:** \`${tokens.accent}\` (Dedicated anchor for primary CTAs and active states)
+- **Canvas Background:** \`${tokens.canvasBg}\` (Enforces 90% neutral baseline per 90/10 discipline)
+- **Surface Cards & Modals:** \`${tokens.surfaceBg}\`
+- **Primary Typography:** \`${tokens.textPrimary}\`
+- **Muted Typography:** \`${tokens.textMuted}\` (Calibrated for WCAG 2.1 AA $\\ge 4.5:1$ contrast)
+
+### Tailored Design Tokens (CSS Variables & Tailwind theme):
+\`\`\`css
+:root {
+  --brand-accent: ${tokens.accent};
+  --bg-canvas: ${tokens.canvasBg};
+  --bg-surface: ${tokens.surfaceBg};
+  --text-primary: ${tokens.textPrimary};
+  --text-muted: ${tokens.textMuted};
+  --border-subtle: rgba(255, 255, 255, 0.08);
+}
+\`\`\`
+
+**Strict AI Mandates:**
+- Anchor all design and layout fixes around these extracted tokens. Do NOT introduce uncoordinated colors.
+- Enforce the 90/10 color rule: 90% neutral canvas, 10% high-energy brand accent.`;
+
+  return `${header}\n\n${brandSection}\n\n## 🛠️ 2. ${
+    isAr ? 'سجل المشاكل المحددة والتوجيهات التنفيذية (اعمل هيك وسوي هيك)' : 'Actionable Prescriptions'
+  }:\n\n${items}`;
 }
 
 /**
@@ -571,6 +627,183 @@ function PrescriptionCard({
   );
 }
 
+/**
+ * Interactive Studio Card for the Tailored Prompt (Colors + Issues)
+ */
+function TailoredPromptStudioCard({
+  auditResult,
+  prescriptions,
+  promptText,
+  cssText,
+  onCopyPrompt,
+  onCopyCss,
+  copiedPrompt,
+  copiedCss,
+  isAr,
+}: {
+  auditResult: UiUxAuditResult;
+  prescriptions: UiUxPrescription[];
+  promptText: string;
+  cssText: string;
+  onCopyPrompt: () => void;
+  onCopyCss: () => void;
+  copiedPrompt: boolean;
+  copiedCss: boolean;
+  isAr: boolean;
+}) {
+  const [activeTab, setActiveTab] = React.useState<'prompt' | 'css'>('prompt');
+  const tokens = React.useMemo(() => extractBrandTokens(auditResult.extractedColors), [auditResult.extractedColors]);
+
+  const handleDownload = () => {
+    const textToDownload = activeTab === 'prompt' ? promptText : cssText;
+    const filename =
+      activeTab === 'prompt'
+        ? `UIUX-Prompt-${auditResult.domain}.md`
+        : `Theme-Tokens-${auditResult.domain}.css`;
+    const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="p-5 sm:p-6 bg-[#090C12] border border-emerald-500/30 rounded-2xl mb-8 shadow-[0_0_30px_rgba(16,185,129,0.06)]">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-800 mb-4">
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-1">
+            <Sparkles className="size-3.5" />
+            <span>{isAr ? 'برومبت ذكي مخصص حسب ألوانك ومشاكلك' : 'Tailored Brand & Issues AI Prompt'}</span>
+          </div>
+          <h3 className="text-base font-bold text-white tracking-tight">
+            {isAr
+              ? 'مُولّد برومبت الإصلاح الشامل المرتكز على هويتك البصرية'
+              : 'Autonomous Brand & Heuristic Repair Prompt Studio'}
+          </h3>
+          <p className="text-xs text-zinc-400 mt-0.5 max-w-2xl">
+            {isAr
+              ? 'تم توليد هذا البرومبت بالاعتماد الدقيق على ألوان موقعك المستخرجة لتطبيق كافة التوجيهات الهندسية («اعمل هيك وسوي هيك» و«زبط اللون هذا») دون الإخلال بهويتك.'
+              : 'Engineered directly from your extracted DOM colors and detected defects. Paste into Claude, ChatGPT, or Cursor to resolve everything in one pass.'}
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={activeTab === 'prompt' ? onCopyPrompt : onCopyCss}
+            className="h-9 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-[0.98]"
+          >
+            {(activeTab === 'prompt' ? copiedPrompt : copiedCss) ? (
+              <>
+                <Check className="size-4 text-zinc-950" />
+                <span>{isAr ? 'تم النسخ بنجاح!' : 'Copied!'}</span>
+              </>
+            ) : (
+              <>
+                <Copy className="size-4 text-zinc-950" />
+                <span>
+                  {activeTab === 'prompt'
+                    ? isAr
+                      ? 'نسخ البرومبت بالكامل'
+                      : 'Copy Full AI Prompt'
+                    : isAr
+                    ? 'نسخ كود الـ CSS'
+                    : 'Copy CSS Tokens'}
+                </span>
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="h-9 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-xs flex items-center gap-1.5 transition-colors font-mono"
+            title={isAr ? 'تحميل الملف' : 'Download File'}
+          >
+            <Download className="size-3.5" />
+            <span className="hidden sm:inline">.md / .css</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Extracted Brand Tokens Strip */}
+      <div className="p-3 bg-zinc-950/70 border border-zinc-800/80 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+        <span className="text-[11px] text-zinc-400 font-semibold flex items-center gap-1.5">
+          <Palette className="size-3.5 text-emerald-400" />
+          <span>{isAr ? 'توكنز الألوان المعتمدة في البرومبت:' : 'Extracted Brand Tokens:'}</span>
+        </span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px]">
+            <span className="size-2.5 rounded-full border border-white/20" style={{ backgroundColor: tokens.accent }} />
+            <span>Accent: {tokens.accent}</span>
+          </span>
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px]">
+            <span className="size-2.5 rounded-full border border-white/20" style={{ backgroundColor: tokens.canvasBg }} />
+            <span>Canvas: {tokens.canvasBg}</span>
+          </span>
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px]">
+            <span className="size-2.5 rounded-full border border-white/20" style={{ backgroundColor: tokens.surfaceBg }} />
+            <span>Surface: {tokens.surfaceBg}</span>
+          </span>
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px]">
+            <span className="size-2.5 rounded-full border border-white/20" style={{ backgroundColor: tokens.textPrimary }} />
+            <span>Text: {tokens.textPrimary}</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-2 mb-2 text-xs font-medium">
+        <button
+          type="button"
+          onClick={() => setActiveTab('prompt')}
+          className={`px-3 py-1.5 rounded-xl border transition-all ${
+            activeTab === 'prompt'
+              ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 font-bold'
+              : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+          }`}
+        >
+          <span className="flex items-center gap-1.5">
+            <Sparkles className="size-3.5 text-emerald-400" />
+            <span>{isAr ? 'برومبت الذكاء الاصطناعي الشامل' : 'Full AI Prompt Payload'}</span>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('css')}
+          className={`px-3 py-1.5 rounded-xl border transition-all ${
+            activeTab === 'css'
+              ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 font-bold'
+              : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
+          }`}
+        >
+          <span className="flex items-center gap-1.5">
+            <Code2 className="size-3.5 text-emerald-400" />
+            <span>{isAr ? 'كود الـ CSS وتوكنز الثيم المجمّعة' : 'Unified CSS & Theme Tokens'}</span>
+          </span>
+        </button>
+      </div>
+
+      {/* Viewport */}
+      <div className="relative rounded-xl border border-zinc-800 bg-[#050608] overflow-hidden">
+        <pre
+          className="p-4 max-h-72 overflow-y-auto text-xs font-mono text-zinc-300 leading-relaxed select-all"
+          dir="ltr"
+        >
+          <code>{activeTab === 'prompt' ? promptText : cssText}</code>
+        </pre>
+      </div>
+    </div>
+  );
+}
+
 // ============================================================================
 // 6. MAIN COMPONENT (EXPORT DEFAULT)
 // ============================================================================
@@ -634,14 +867,26 @@ export default function UiUxAuditPage() {
     });
   }, [auditResult, categoryFilter, severityFilter]);
 
+  // Tailored AI Prompt Text (Ground truth based on exact brand colors & issues)
+  const tailoredPromptText = React.useMemo(() => {
+    if (!auditResult) return '';
+    const targetPrescriptions =
+      filteredPrescriptions.length > 0 ? filteredPrescriptions : auditResult.prescriptions;
+    return buildPrescriptionsAiPrompt(auditResult, targetPrescriptions, isAr);
+  }, [auditResult, filteredPrescriptions, isAr]);
+
+  // Unified CSS Fixes Text
+  const tailoredCssText = React.useMemo(() => {
+    if (!auditResult) return '';
+    const targetPrescriptions =
+      filteredPrescriptions.length > 0 ? filteredPrescriptions : auditResult.prescriptions;
+    return buildUnifiedCssFixes(targetPrescriptions);
+  }, [auditResult, filteredPrescriptions]);
+
   // Master Prompt Generation
   const handleCopyMasterPrompt = () => {
     if (!auditResult) return;
-    const targetPrescriptions =
-      filteredPrescriptions.length > 0 ? filteredPrescriptions : auditResult.prescriptions;
-    const promptText = buildPrescriptionsAiPrompt(auditResult, targetPrescriptions, isAr);
-
-    navigator.clipboard.writeText(promptText);
+    navigator.clipboard.writeText(tailoredPromptText);
     setPromptCopied(true);
     setTimeout(() => setPromptCopied(false), 2500);
   };
@@ -649,11 +894,7 @@ export default function UiUxAuditPage() {
   // Unified CSS Fixes Generation
   const handleCopyAllCss = () => {
     if (!auditResult) return;
-    const targetPrescriptions =
-      filteredPrescriptions.length > 0 ? filteredPrescriptions : auditResult.prescriptions;
-    const css = buildUnifiedCssFixes(targetPrescriptions);
-
-    navigator.clipboard.writeText(css);
+    navigator.clipboard.writeText(tailoredCssText);
     setAllCssCopied(true);
     setTimeout(() => setAllCssCopied(false), 2500);
   };
@@ -768,6 +1009,19 @@ export default function UiUxAuditPage() {
               colors={auditResult.extractedColors}
               isAr={isAr}
               t={t}
+            />
+
+            {/* Tailored Brand & Heuristic AI Prompt Studio */}
+            <TailoredPromptStudioCard
+              auditResult={auditResult}
+              prescriptions={filteredPrescriptions.length > 0 ? filteredPrescriptions : auditResult.prescriptions}
+              promptText={tailoredPromptText}
+              cssText={tailoredCssText}
+              onCopyPrompt={handleCopyMasterPrompt}
+              onCopyCss={handleCopyAllCss}
+              copiedPrompt={promptCopied}
+              copiedCss={allCssCopied}
+              isAr={isAr}
             />
 
             {/* Prescriptions Filter Bar */}

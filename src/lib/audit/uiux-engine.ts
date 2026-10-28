@@ -46,7 +46,7 @@ function calculateContrastRatio(lum1: number, lum2: number): number {
 // ============================================================================
 // COLOR EXTRACTOR
 // ============================================================================
-function extractDomColors(rawHtml: string): ExtractedColor[] {
+export function extractDomColors(rawHtml: string): ExtractedColor[] {
   const hexRegex = /#(?:[0-9a-fA-F]{3}){1,2}\b/g;
   const matches = rawHtml.match(hexRegex) || [];
   const frequencyMap = new Map<string, number>();
