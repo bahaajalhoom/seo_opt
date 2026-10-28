@@ -45,6 +45,16 @@ export interface TranslationDictionary {
   noJsonLdFound: string;
   citationReadinessTitle: string;
   markdownClarityTitle: string;
+  paletteSectionTitle: string;
+  paletteSectionSub: string;
+  paletteCopyAllCss: string;
+  paletteCssCopied: string;
+  paletteEmpty: string;
+  paletteDetectedCount: string;
+  paletteAccentLabel: string;
+  paletteCanvasLabel: string;
+  paletteSurfaceLabel: string;
+  paletteTextLabel: string;
   issuesListTitle: string;
   issuesListSub: string;
   filterAll: string;
@@ -160,6 +170,16 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     noJsonLdFound: 'لم يتم اكتشاف مخططات هيكلية Schema.org',
     citationReadinessTitle: 'معامل قابلية الاقتباس الفوري',
     markdownClarityTitle: 'وضوح البنية الدلالية للنصوص',
+    paletteSectionTitle: 'الألوان المستخدمة في الموقع وهويتك البصرية',
+    paletteSectionSub: 'استخراج حقيقي لكافة درجات الألوان (HEX)، ونسب الإضاءة والتكرار في كود صفحتك مع توكنز قاعدة 90/10.',
+    paletteCopyAllCss: 'نسخ متغيرات الألوان (:root CSS)',
+    paletteCssCopied: 'تم نسخ متغيرات الـ CSS بنجاح!',
+    paletteEmpty: 'لم يتم العثور على ألوان صريحة أو أنماط HEX في الصفحة المستهدفة.',
+    paletteDetectedCount: 'ألوان مكتشفة في الكود',
+    paletteAccentLabel: 'لون التمييز (Accent)',
+    paletteCanvasLabel: 'الخلفية (Canvas)',
+    paletteSurfaceLabel: 'البطاقات (Surface)',
+    paletteTextLabel: 'النصوص (Text)',
     issuesListTitle: 'سجل الملاحظات والإصلاحات التقنية',
     issuesListSub: 'قائمة بالمشاكل المكتشفة مصنفة حسب الأهمية مع الأثر البرمجي وحلول الأكواد الجاهزة.',
     filterAll: 'جميع المعايير',
@@ -283,6 +303,16 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     noJsonLdFound: 'No JSON-LD schemas discovered',
     citationReadinessTitle: 'AI Citation Readiness Index',
     markdownClarityTitle: 'Semantic Text Density',
+    paletteSectionTitle: 'Extracted Brand Palette & Visual Identity',
+    paletteSectionSub: 'Real DOM extraction of HEX codes, relative luminance, and frequency with 90/10 design tokens.',
+    paletteCopyAllCss: 'Copy CSS Variables (:root)',
+    paletteCssCopied: 'CSS Variables Copied!',
+    paletteEmpty: 'No explicit HEX color codes discovered in target DOM styles.',
+    paletteDetectedCount: 'Colors detected in DOM',
+    paletteAccentLabel: 'Brand Accent',
+    paletteCanvasLabel: 'Canvas Background',
+    paletteSurfaceLabel: 'Surface Cards',
+    paletteTextLabel: 'Primary Text',
     issuesListTitle: 'Diagnostic Defect & Code Fix Ledger',
     issuesListSub: 'Prioritized issue roster with technical impacts, target source files, and copyable production fixes.',
     filterAll: 'All Heuristics',
