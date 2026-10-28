@@ -14,6 +14,8 @@ import {
   Search,
   Code2,
   FileCode2,
+  Sparkles,
+  ExternalLink,
 } from 'lucide-react';
 import { AuditIssue, AuditCategory, IssueSeverity, SupportedLang } from '@/types/audit';
 import { translations } from '@/lib/translations';
@@ -61,6 +63,7 @@ interface IssuesListProps {
   issues: AuditIssue[];
   lang: SupportedLang;
   selectedCategory?: AuditCategory | 'all';
+  onOpenMasterPrompt?: () => void;
 }
 
 interface IssueRowProps {
@@ -115,6 +118,62 @@ function filterIssues(
 
     return title.includes(query) || desc.includes(query) || code.includes(query);
   });
+}
+
+/**
+ * Synthesizes a unified, multi-file AI prompt containing all detected issues,
+ * target files, problem diagnoses, technical impacts, and exact fix snippets.
+ */
+function buildAllIssuesAiPrompt(issues: AuditIssue[], isAr: boolean): string {
+  const header = isAr
+    ? `# 🛠️ برومبت الإصلاح الشامل لكافة المشاكل البرمجية المكتشفة (${issues.length} مشكلة)
+أنت مهندس برمجيات رئيسي (Principal Full-Stack & Technical SEO/GEO Architect).
+مهمتك تطبيق الحلول البرمجية لكافة المشاكل التالية في المشروع بالكامل دفعة واحدة وبأعلى المعايير الهندسية:
+1. تقديم كود إنتاجي كامل drop-in replacement لكل ملف مستهدف.
+2. حل المشاكل دون التسبب في أي أخطاء جانبية.`
+    : `# 🛠️ UNIFIED MASTER REPAIR PROMPT: Fix All ${issues.length} Detected Issues
+You are a Principal Full-Stack & Technical SEO/GEO Architect.
+Your task is to implement production-ready fixes for all detected technical issues in this project:
+1. Provide full drop-in replacement code for each targeted source file.
+2. Ensure zero regressions and strict compliance with modern web standards.`;
+
+  const items = issues
+    .map((issue, idx) => {
+      const title = isAr ? issue.titleAr : issue.titleEn;
+      const desc = isAr ? issue.descriptionAr : issue.descriptionEn;
+      const impact = isAr ? issue.impactAr : issue.impactEn;
+      const fix = isAr ? issue.fixRecommendationAr : issue.fixRecommendationEn;
+      const targetFile = issue.targetFile
+        ? `\n- **${isAr ? 'الملف المستهدف' : 'Target File'}:** \`${issue.targetFile}\``
+        : '';
+      const code = issue.codeSnippet ? `\n\`\`\`\n${issue.codeSnippet}\n\`\`\`` : '';
+
+      return `### ${idx + 1}. [${issue.category.toUpperCase()}] ${title} (${issue.severity.toUpperCase()})${targetFile}
+- **${isAr ? 'المشكلة' : 'Defect'}:** ${desc}
+- **${isAr ? 'الأثر التقني' : 'Technical Impact'}:** ${impact}
+- **${isAr ? 'الحل الهندسي' : 'Production Fix'}:** ${fix}${code}`;
+    })
+    .join('\n\n');
+
+  return `${header}\n\n${items}`;
+}
+
+/**
+ * Combines all production fix code snippets into a single unified code block.
+ */
+function buildAllCodeSnippetsOnly(issues: AuditIssue[]): string {
+  const snippets = issues
+    .filter((i) => Boolean(i.codeSnippet))
+    .map((issue, idx) => {
+      const fileHeader = issue.targetFile ? `// File: ${issue.targetFile}\n` : '';
+      return `/* ============================================================================
+ * ${idx + 1}. [${issue.category.toUpperCase()}] ${issue.titleEn || issue.title} (${issue.severity.toUpperCase()})
+ * ${fileHeader}============================================================================ */
+${issue.codeSnippet}`;
+    })
+    .join('\n\n');
+
+  return snippets || '// No actionable code snippets found in the selected issues.';
 }
 
 // ============================================================================
@@ -402,10 +461,98 @@ function IssuesFilterBar({
   );
 }
 
+function BatchFixActionBanner({
+  issuesCount,
+  onCopyAllPrompt,
+  onCopyAllSnippets,
+  onOpenMasterModal,
+  copiedPrompt,
+  copiedSnippets,
+  t,
+}: {
+  issuesCount: number;
+  onCopyAllPrompt: () => void;
+  onCopyAllSnippets: () => void;
+  onOpenMasterModal?: () => void;
+  copiedPrompt: boolean;
+  copiedSnippets: boolean;
+  t: (typeof translations)[SupportedLang];
+}) {
+  return (
+    <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-950/30 via-[#0B0E14] to-[#0A0C11] border-b border-white/[0.08] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="space-y-1 max-w-xl">
+        <div className="flex items-center gap-2">
+          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+          <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+            <Sparkles className="size-4 text-emerald-400" />
+            <span>{t.batchFixBannerTitle}</span>
+          </h4>
+        </div>
+        <p className="text-xs text-zinc-400 leading-relaxed ps-4">{t.batchFixBannerSub}</p>
+      </div>
+
+      <div className="flex items-center gap-2 flex-wrap shrink-0 w-full md:w-auto">
+        <button
+          type="button"
+          onClick={onCopyAllPrompt}
+          className="flex-1 md:flex-initial h-10 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-[0.98]"
+        >
+          {copiedPrompt ? (
+            <>
+              <Check className="size-4 text-zinc-950" />
+              <span>{t.allIssuesPromptCopied}</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="size-4 text-zinc-950" />
+              <span>{t.copyAllIssuesPrompt}</span>
+            </>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={onCopyAllSnippets}
+          className="h-10 px-3.5 rounded-xl bg-[#0E121A] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/[0.15] text-zinc-300 hover:text-white font-medium text-xs flex items-center justify-center gap-2 transition-all"
+        >
+          {copiedSnippets ? (
+            <>
+              <Check className="size-3.5 text-emerald-400" />
+              <span className="text-emerald-400">{t.allCodeSnippetsCopied}</span>
+            </>
+          ) : (
+            <>
+              <FileCode2 className="size-3.5 text-zinc-400" />
+              <span>{t.copyAllCodeSnippets}</span>
+            </>
+          )}
+        </button>
+
+        {onOpenMasterModal && (
+          <button
+            type="button"
+            onClick={onOpenMasterModal}
+            className="h-10 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 hover:text-white text-xs flex items-center justify-center gap-1.5 transition-colors"
+            title={t.openMasterPromptBtn}
+          >
+            <ExternalLink className="size-3.5 text-emerald-400" />
+            <span className="hidden sm:inline">{t.openMasterPromptBtn}</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ============================================================================
 // 6. MAIN COMPONENT
 // ============================================================================
-export function IssuesList({ issues, lang, selectedCategory = 'all' }: IssuesListProps) {
+export function IssuesList({
+  issues,
+  lang,
+  selectedCategory = 'all',
+  onOpenMasterPrompt,
+}: IssuesListProps) {
   const t = translations[lang];
   const isAr = lang === 'ar';
 
@@ -417,6 +564,8 @@ export function IssuesList({ issues, lang, selectedCategory = 'all' }: IssuesLis
   const [searchQuery, setSearchQuery] = React.useState('');
   const [expandedId, setExpandedId] = React.useState<string | null>(null);
   const [copiedSnippetId, setCopiedSnippetId] = React.useState<string | null>(null);
+  const [copiedAllPrompt, setCopiedAllPrompt] = React.useState(false);
+  const [copiedAllSnippets, setCopiedAllSnippets] = React.useState(false);
 
   const searchInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -459,6 +608,22 @@ export function IssuesList({ issues, lang, selectedCategory = 'all' }: IssuesLis
     setTimeout(() => setCopiedSnippetId(null), 2000);
   };
 
+  const handleCopyAllPrompt = () => {
+    const targetIssues = filteredIssues.length > 0 ? filteredIssues : issues;
+    const promptText = buildAllIssuesAiPrompt(targetIssues, isAr);
+    navigator.clipboard.writeText(promptText);
+    setCopiedAllPrompt(true);
+    setTimeout(() => setCopiedAllPrompt(false), 2500);
+  };
+
+  const handleCopyAllSnippets = () => {
+    const targetIssues = filteredIssues.length > 0 ? filteredIssues : issues;
+    const codeText = buildAllCodeSnippetsOnly(targetIssues);
+    navigator.clipboard.writeText(codeText);
+    setCopiedAllSnippets(true);
+    setTimeout(() => setCopiedAllSnippets(false), 2500);
+  };
+
   const handleResetFilters = () => {
     setCategoryFilter('all');
     setSeverityFilter('all');
@@ -470,6 +635,17 @@ export function IssuesList({ issues, lang, selectedCategory = 'all' }: IssuesLis
   // --------------------------------------------------------------------------
   return (
     <div className="surface-hud rounded-3xl overflow-hidden">
+      {/* 1-Click Complete Issue Resolution Banner */}
+      <BatchFixActionBanner
+        issuesCount={filteredIssues.length}
+        onCopyAllPrompt={handleCopyAllPrompt}
+        onCopyAllSnippets={handleCopyAllSnippets}
+        onOpenMasterModal={onOpenMasterPrompt}
+        copiedPrompt={copiedAllPrompt}
+        copiedSnippets={copiedAllSnippets}
+        t={t}
+      />
+
       {/* Filter and Search Bar */}
       <IssuesFilterBar
         activeCategory={categoryFilter}

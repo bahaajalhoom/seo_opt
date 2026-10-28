@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Code2,
+  FileCode2,
 } from 'lucide-react';
 import { AuditHeader } from '@/components/AuditHeader';
 import { AuditFooter } from '@/components/AuditFooter';
@@ -134,6 +135,75 @@ function getSeverityBadgeStyle(sev: PrescriptionSeverity): {
         icon: CheckCircle2,
       };
   }
+}
+
+/**
+ * Synthesizes all actionable prescriptions into an AI-ready master refactoring prompt.
+ */
+function buildPrescriptionsAiPrompt(
+  result: UiUxAuditResult,
+  prescriptions: UiUxPrescription[],
+  isAr: boolean
+): string {
+  const items = prescriptions
+    .map((p, idx) => {
+      const title = isAr ? p.titleAr : p.titleEn;
+      const diag = isAr ? p.diagnosisAr : p.diagnosisEn;
+      const action = isAr ? p.actionRuleAr : p.actionRuleEn;
+      const snippet = p.cssFixSnippet ? `\n\`\`\`css\n${p.cssFixSnippet}\n\`\`\`` : '';
+      const vals =
+        p.currentValue || p.suggestedValue
+          ? `\n- ${isAr ? 'القيمة الحالية' : 'Current'}: ${p.currentValue ?? 'N/A'} | ${
+              isAr ? 'المطلوبة' : 'Suggested'
+            }: ${p.suggestedValue ?? 'N/A'}`
+          : '';
+
+      return `### ${idx + 1}. [${p.category.toUpperCase()}] ${title} (${p.severity.toUpperCase()})
+- **${isAr ? 'التشخيص' : 'Diagnosis'}:** ${diag}
+- **${isAr ? 'التوجيه المباشر (اعمل هيك وسوي هيك)' : 'Action Directive'}:** ${action}
+- **${isAr ? 'القاعدة التصميمية' : 'Design Rule'}:** ${p.designPrinciple}${vals}${snippet}`;
+    })
+    .join('\n\n');
+
+  const header = isAr
+    ? `# 🎨 برومبت الإصلاح الشامل لتجربة وواجهة المستخدم (UI/UX) - موقع: ${result.domain}
+النتيجة الحالية: ${result.overallScore}/100 (${result.verdictAr})
+
+أنت مهندس تصميم وواجهات رئيسي (Principal UI/UX & Frontend Architect).
+مهمتك تطبيق الحلول والتوجيهات التصميمية التالية بدقة واحترافية:
+1. تطبيق قاعدة 90/10 للألوان: 90% ألوان محايدة هادئة و 10% لون تمييز واحد فقط للـ CTAs.
+2. ضمان تحقيق نسبة التباين WCAG 2.1 AA (4.5:1 على الأقل لكافة النصوص).
+3. ضبط مساحات النقر للأزرار (Touch Targets لا تقل عن 44x44 بكسل).
+4. ضبط ارتفاع الأسطر للفقرات (line-height: 1.625) لتسهيل القراءة.`
+    : `# 🎨 UI/UX MASTER REFACTORING PROMPT - Target: ${result.domain}
+Current Score: ${result.overallScore}/100 (${result.verdictEn})
+
+You are a Principal UI/UX & Frontend Architect.
+Your task is to implement all of the following design directives with zero slop:
+1. Enforce the 90/10 color rule (90% neutral surfaces, 10% purposeful accent for CTAs).
+2. Ensure WCAG 2.1 AA contrast ratio (at least 4.5:1 on all text).
+3. Ensure Fitts's Law compliance with minimum 44x44px touch targets.
+4. Set paragraph line-height to 1.625 for optimal reading rhythm.`;
+
+  return `${header}\n\n## 🛠️ ${isAr ? 'سجل التوجيهات الهندسية المطلوب تنفيذها' : 'Actionable Prescriptions'}:\n\n${items}`;
+}
+
+/**
+ * Extracts and combines all CSS / Tailwind recipes from prescriptions into one unified stylesheet.
+ */
+function buildUnifiedCssFixes(prescriptions: UiUxPrescription[]): string {
+  const snippets = prescriptions
+    .filter((p) => Boolean(p.cssFixSnippet))
+    .map((p, idx) => {
+      return `/* ============================================================================
+ * ${idx + 1}. [${p.category.toUpperCase()}] ${p.titleEn} (${p.severity.toUpperCase()})
+ * Rule: ${p.designPrinciple}
+ * ============================================================================ */
+${p.cssFixSnippet}`;
+    })
+    .join('\n\n');
+
+  return snippets || '/* No CSS snippets needed for current items. */';
 }
 
 // ============================================================================
@@ -513,6 +583,7 @@ export default function UiUxAuditPage() {
   const [categoryFilter, setCategoryFilter] = React.useState<CategoryFilter>('all');
   const [severityFilter, setSeverityFilter] = React.useState<SeverityFilter>('all');
   const [promptCopied, setPromptCopied] = React.useState(false);
+  const [allCssCopied, setAllCssCopied] = React.useState(false);
 
   const t = translations[lang];
   const isAr = lang === 'ar';
@@ -566,31 +637,25 @@ export default function UiUxAuditPage() {
   // Master Prompt Generation
   const handleCopyMasterPrompt = () => {
     if (!auditResult) return;
-    const items = auditResult.prescriptions
-      .map(
-        (p, idx) =>
-          `### ${idx + 1}. [${p.category.toUpperCase()}] ${p.titleEn} (${p.severity.toUpperCase()})\n- Diagnostic: ${p.diagnosisEn}\n- Action Directive: ${p.actionRuleEn}\n- Design Rule: ${p.designPrinciple}\n${p.cssFixSnippet ? `\`\`\`css\n${p.cssFixSnippet}\n\`\`\`` : ''}`
-      )
-      .join('\n\n');
-
-    const promptText = `You are a Principal UI/UX & Frontend Architect. Please execute a complete, studio-grade refactoring of the following website (${auditResult.url}) based on this strict UI/UX audit ledger.
-
-Overall UI/UX Score: ${auditResult.overallScore}/100
-Verdict: ${auditResult.verdictEn}
-
-Key Prescriptions & Action Directives to Implement Immediately:
-${items}
-
-Constraints:
-- Maintain 90/10 color palette discipline (90% muted backgrounds/neutrals, 10% purposeful accent).
-- Ensure all text contrasts meet WCAG 2.1 AA (at least 4.5:1 ratio).
-- Ensure all interactive elements have at least 44x44px touch targets.
-- Eliminate layout shifts (CLS = 0).
-- Provide clean, production-ready React / Tailwind code.`;
+    const targetPrescriptions =
+      filteredPrescriptions.length > 0 ? filteredPrescriptions : auditResult.prescriptions;
+    const promptText = buildPrescriptionsAiPrompt(auditResult, targetPrescriptions, isAr);
 
     navigator.clipboard.writeText(promptText);
     setPromptCopied(true);
     setTimeout(() => setPromptCopied(false), 2500);
+  };
+
+  // Unified CSS Fixes Generation
+  const handleCopyAllCss = () => {
+    if (!auditResult) return;
+    const targetPrescriptions =
+      filteredPrescriptions.length > 0 ? filteredPrescriptions : auditResult.prescriptions;
+    const css = buildUnifiedCssFixes(targetPrescriptions);
+
+    navigator.clipboard.writeText(css);
+    setAllCssCopied(true);
+    setTimeout(() => setAllCssCopied(false), 2500);
   };
 
   return (
@@ -652,22 +717,43 @@ Constraints:
                   {isAr ? auditResult.verdictAr : auditResult.verdictEn}
                 </h2>
               </div>
-              <button
-                onClick={handleCopyMasterPrompt}
-                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs rounded-xl flex items-center gap-2 transition-colors shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-              >
-                {promptCopied ? (
-                  <>
-                    <Check className="size-4 text-zinc-950" />
-                    <span>{isAr ? 'تم نسخ برومبت الـ UI/UX!' : 'Master Prompt Copied!'}</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="size-4 text-zinc-950" />
-                    <span>{isAr ? 'نسخ برومبت الإصلاح للـ AI' : 'Copy AI Fix Prompt'}</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2 flex-wrap shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCopyMasterPrompt}
+                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs rounded-xl flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-[0.98]"
+                >
+                  {promptCopied ? (
+                    <>
+                      <Check className="size-4 text-zinc-950" />
+                      <span>{t.uiuxAllPromptCopied}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="size-4 text-zinc-950" />
+                      <span>{t.uiuxCopyAllPrompt}</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCopyAllCss}
+                  className="px-3.5 py-2 bg-[#0E121A] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/[0.15] text-zinc-300 hover:text-white font-medium text-xs rounded-xl flex items-center gap-2 transition-all"
+                >
+                  {allCssCopied ? (
+                    <>
+                      <Check className="size-3.5 text-emerald-400" />
+                      <span className="text-emerald-400">{t.uiuxAllCssCopied}</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileCode2 className="size-3.5 text-zinc-400" />
+                      <span>{t.uiuxCopyAllCss}</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Five Vector Score Bento */}
@@ -747,6 +833,62 @@ Constraints:
                   <span>{t.uiuxPrescriptionsTitle}</span>
                 </h3>
                 <p className="text-xs text-zinc-400 mt-0.5">{t.uiuxPrescriptionsSub}</p>
+              </div>
+
+              {/* 1-Click Complete UI/UX Issue Resolution Banner */}
+              <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-950/30 via-[#0B0E14] to-[#0A0C11] border border-white/[0.08] rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-5">
+                <div className="space-y-1 max-w-xl">
+                  <div className="flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                      <Sparkles className="size-4 text-emerald-400" />
+                      <span>{isAr ? 'حل كافة مشاكل الـ UI/UX بنقرة واحدة بالذكاء الاصطناعي' : '1-Click Complete UI/UX Issue Resolution'}</span>
+                    </h4>
+                  </div>
+                  <p className="text-xs text-zinc-400 leading-relaxed ps-4">
+                    {isAr
+                      ? 'بدلاً من تطبيق كل ملاحظة على حدة، انسخ البرومبت الكامل لكل التوجيهات الهندسية («اعمل هيك وسوي هيك» و«زبط اللون هذا») أو انسخ كود الـ CSS الموحّد.'
+                      : 'Copy all actionable directives and contrast fixes into Claude or ChatGPT in one pass, or grab the unified CSS stylesheet directly.'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap shrink-0 w-full md:w-auto">
+                  <button
+                    type="button"
+                    onClick={handleCopyMasterPrompt}
+                    className="flex-1 md:flex-initial h-10 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-[0.98]"
+                  >
+                    {promptCopied ? (
+                      <>
+                        <Check className="size-4 text-zinc-950" />
+                        <span>{t.uiuxAllPromptCopied}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="size-4 text-zinc-950" />
+                        <span>{t.uiuxCopyAllPrompt}</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleCopyAllCss}
+                    className="h-10 px-3.5 rounded-xl bg-[#0E121A] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/[0.15] text-zinc-300 hover:text-white font-medium text-xs flex items-center justify-center gap-2 transition-all"
+                  >
+                    {allCssCopied ? (
+                      <>
+                        <Check className="size-3.5 text-emerald-400" />
+                        <span className="text-emerald-400">{t.uiuxAllCssCopied}</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileCode2 className="size-3.5 text-zinc-400" />
+                        <span>{t.uiuxCopyAllCss}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
               {filteredPrescriptions.length === 0 ? (

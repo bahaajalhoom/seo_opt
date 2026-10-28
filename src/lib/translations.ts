@@ -57,6 +57,12 @@ export interface TranslationDictionary {
   resetFiltersBtn: string;
   copyFixSnippet: string;
   codeSnippetCopied: string;
+  copyAllIssuesPrompt: string;
+  allIssuesPromptCopied: string;
+  copyAllCodeSnippets: string;
+  allCodeSnippetsCopied: string;
+  batchFixBannerTitle: string;
+  batchFixBannerSub: string;
   learnMoreLink: string;
   problemLabel: string;
   impactLabel: string;
@@ -96,6 +102,10 @@ export interface TranslationDictionary {
   uiuxPrincipleLabel: string;
   uiuxCopySnippet: string;
   uiuxSnippetCopied: string;
+  uiuxCopyAllCss: string;
+  uiuxAllCssCopied: string;
+  uiuxCopyAllPrompt: string;
+  uiuxAllPromptCopied: string;
   uiuxVectorsTitle: string;
   uiuxColorsCategory: string;
   uiuxTypographyCategory: string;
@@ -162,6 +172,12 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     resetFiltersBtn: 'إعادة ضبط الفلاتر',
     copyFixSnippet: 'نسخ الكود',
     codeSnippetCopied: 'تم نسخ الكود!',
+    copyAllIssuesPrompt: 'نسخ كل المشاكل وأكواد الحلول (حل دفعة واحدة بالذكاء الاصطناعي)',
+    allIssuesPromptCopied: 'تم نسخ كافة المشاكل وأكواد الحلول بنجاح!',
+    copyAllCodeSnippets: 'نسخ كل الأكواد مجمعة',
+    allCodeSnippetsCopied: 'تم نسخ الأكواد المجمعة بنجاح!',
+    batchFixBannerTitle: 'حل كافة المشاكل بنقرة واحدة بواسطة الذكاء الاصطناعي',
+    batchFixBannerSub: 'بدلاً من نسخ كل كود بمفرده، انسخ ملف الإصلاح الشامل لكافة المشاكل المكتشفة والصقه مباشرة في ChatGPT أو Claude 3.7 أو Cursor ليحلها فوراً.',
     learnMoreLink: 'دليل التوثيق الرسمي',
     problemLabel: 'المشكلة المكتشفة:',
     impactLabel: 'الأثر على الترتيب والذكاء الاصطناعي:',
@@ -211,6 +227,10 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     uiuxPrincipleLabel: 'القاعدة التصميمية المعتمدة:',
     uiuxCopySnippet: 'نسخ الكود التصحيحي',
     uiuxSnippetCopied: 'تم نسخ الكود!',
+    uiuxCopyAllCss: 'نسخ كود CSS المجمّع لكافة الإصلاحات',
+    uiuxAllCssCopied: 'تم نسخ كود الـ CSS المجمّع بنجاح!',
+    uiuxCopyAllPrompt: 'نسخ كافة توجيهات الـ UI/UX للذكاء الاصطناعي',
+    uiuxAllPromptCopied: 'تم نسخ برومبت الـ UI/UX الشامل!',
     uiuxVectorsTitle: 'المحاور الخمسة لجودة الواجهة',
     uiuxColorsCategory: 'الألوان والتباين',
     uiuxTypographyCategory: 'الخطوط والمقروئية',
@@ -275,6 +295,12 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     resetFiltersBtn: 'Reset Filters',
     copyFixSnippet: 'Copy Code',
     codeSnippetCopied: 'Copied!',
+    copyAllIssuesPrompt: 'Copy All Issues & Solutions (1-Click AI Fix)',
+    allIssuesPromptCopied: 'All issues & fixes copied to clipboard!',
+    copyAllCodeSnippets: 'Copy All Code Fixes',
+    allCodeSnippetsCopied: 'All code fixes copied!',
+    batchFixBannerTitle: '1-Click Complete Issue Resolution with AI',
+    batchFixBannerSub: 'Instead of copying each snippet individually, copy this comprehensive multi-file payload into Claude, ChatGPT, or Cursor to fix everything in one pass.',
     learnMoreLink: 'Official Documentation',
     problemLabel: 'Detected Defect:',
     impactLabel: 'Impact on Search & AI Standing:',
@@ -324,6 +350,10 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     uiuxPrincipleLabel: 'Governing Design Principle:',
     uiuxCopySnippet: 'Copy CSS/Fix',
     uiuxSnippetCopied: 'Snippet Copied!',
+    uiuxCopyAllCss: 'Copy Unified CSS Fixes',
+    uiuxAllCssCopied: 'Unified CSS fixes copied!',
+    uiuxCopyAllPrompt: 'Copy All UI/UX Directives for AI',
+    uiuxAllPromptCopied: 'Master UI/UX prompt copied!',
     uiuxVectorsTitle: 'Five-Vector Interface Benchmark',
     uiuxColorsCategory: 'Colors & Contrast',
     uiuxTypographyCategory: 'Typography & Legibility',

@@ -361,6 +361,7 @@ export default function AuditDashboardPage() {
               issues={auditData.issues}
               lang={lang}
               selectedCategory={selectedCategory}
+              onOpenMasterPrompt={() => setIsPromptModalOpen(true)}
             />
           </div>
         )}
