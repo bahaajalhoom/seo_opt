@@ -4,6 +4,7 @@
 // 1. IMPORTS
 // ============================================================================
 import * as React from 'react';
+import Link from 'next/link';
 import {
   Sparkles,
   Search,
@@ -12,6 +13,7 @@ import {
   AlertOctagon,
   ArrowRight,
   RotateCw,
+  Wand2,
 } from 'lucide-react';
 import { AuditResult, AuditCategory, SupportedLang } from '@/types/audit';
 import { translations } from '@/lib/translations';
@@ -423,6 +425,33 @@ export default function AuditDashboardPage() {
               lang={lang}
               onSelectCategory={(category) => setSelectedCategory(category)}
             />
+
+            {/* Direct Cross-Link: Feature Architect & Growth Proposals */}
+            <div className="rounded-2xl border border-white/[0.08] bg-[#0A0C10] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 text-emerald-400 text-xs font-mono font-semibold">
+                  <Wand2 className="size-3.5" />
+                  <span>مختبر وهندسة ميزات المنصة (Feature Architect)</span>
+                </div>
+                <h3 className="text-base font-bold text-white font-mono">
+                  {lang === 'ar'
+                    ? `تريد اقتراح ميزات ونمو حقيقية لموقع ${auditData.domain}؟`
+                    : `Want tailored feature and growth proposals for ${auditData.domain}?`}
+                </h3>
+                <p className="text-xs text-zinc-400">
+                  {lang === 'ar'
+                    ? 'يقوم المحرك بقراءة كافة صفحات ومكونات موقعك واقتراح ميزات برمجية تضاعف التحويل مع برومبتات AI كاملة.'
+                    : 'Deeply analyzes your site archetype, pages and tech stack to propose high-converting features.'}
+                </p>
+              </div>
+              <Link
+                href={`/features?url=${encodeURIComponent(auditData.url)}`}
+                className="px-5 py-2.5 rounded-xl bg-white/[0.05] hover:bg-emerald-500 hover:text-zinc-950 border border-white/[0.08] hover:border-emerald-400 text-xs font-bold text-white transition-all flex items-center gap-2 shrink-0 shadow-lg"
+              >
+                <span>{lang === 'ar' ? 'فحص واقتراح الميزات الآن' : 'Explore Features Now'}</span>
+                <ArrowRight className="size-3.5 rtl:rotate-180" />
+              </Link>
+            </div>
 
             {/* GEO AI Engine Telemetry */}
             <GeoDeepDive geo={auditData.geoDetails} lang={lang} />

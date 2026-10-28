@@ -18,6 +18,7 @@ import { Globe, Download, Menu, X } from 'lucide-react';
 const NAV_ROUTES = [
   { href: '/', labelKey: 'navAudit' as const },
   { href: '/ui-ux', labelKey: 'navUiUx' as const },
+  { href: '/features', labelKey: 'navFeatures' as const },
   { href: '/methodology', labelKey: 'navMethodology' as const },
   { href: '/about', labelKey: 'navAbout' as const },
   { href: '/terms', labelKey: 'navTerms' as const },
@@ -64,7 +65,7 @@ function DesktopNavigation({ pathname, t }: NavLinksProps) {
     <nav className="hidden lg:flex items-center gap-1.5 text-xs">
       {NAV_ROUTES.map((route) => {
         const isActive = pathname === route.href;
-        const isCoreTool = route.href === '/' || route.href === '/ui-ux';
+        const isCoreTool = route.href === '/' || route.href === '/ui-ux' || route.href === '/features';
         return (
           <Link
             key={route.href}
@@ -97,7 +98,7 @@ function MobileNavDrawer({ pathname, t, onItemClick }: NavLinksProps) {
     <div className="lg:hidden border-b border-white/[0.08] bg-[#08090C] px-4 py-4 space-y-1.5 animate-in slide-in-from-top-2 duration-150">
       {NAV_ROUTES.map((route) => {
         const isActive = pathname === route.href;
-        const isCoreTool = route.href === '/' || route.href === '/ui-ux';
+        const isCoreTool = route.href === '/' || route.href === '/ui-ux' || route.href === '/features';
         return (
           <Link
             key={route.href}
