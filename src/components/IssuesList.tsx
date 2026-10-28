@@ -189,9 +189,9 @@ function SeverityBadgePill({
   const config =
     severity === 'critical'
       ? SEVERITY_CONFIG.critical
-      : severity === 'warning'
-      ? SEVERITY_CONFIG.warning
-      : SEVERITY_CONFIG.passed;
+      : severity === 'passed'
+      ? SEVERITY_CONFIG.passed
+      : SEVERITY_CONFIG.warning;
 
   const label = t.severities[config.labelKey];
 

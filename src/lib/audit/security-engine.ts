@@ -141,7 +141,7 @@ export function runSecurityAudit(ctx: FetchedAuditContext): CategoryResult<Secur
     issues.push({
       id: 'sec-missing-permissions-policy',
       category: 'security',
-      severity: 'info',
+      severity: 'warning',
       title: 'Missing Permissions-Policy Header',
       description: 'No `Permissions-Policy` header found.',
       impact: 'Third-party scripts may attempt unauthorized access to browser APIs (camera, microphone, geolocation).',

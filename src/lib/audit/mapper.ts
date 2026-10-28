@@ -55,8 +55,8 @@ const ARABIC_TITLE_MAP: Record<string, string> = {
 
 function normalizeSeverity(sev: string): IssueSeverity {
   if (sev === 'critical') return 'critical';
-  if (sev === 'warning') return 'warning';
-  return 'passed';
+  if (sev === 'passed' || sev === 'good') return 'passed';
+  return 'warning';
 }
 
 export function mapComprehensiveToAuditResult(comp: ComprehensiveAuditResult): AuditResult {

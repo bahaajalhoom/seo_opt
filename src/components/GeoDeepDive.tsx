@@ -31,9 +31,11 @@ interface GeoDeepDiveProps {
 
 interface LlmsTxtCardProps {
   isDetected: boolean;
+  isFullDetected: boolean;
   title: string;
   foundText: string;
   missingText: string;
+  isAr: boolean;
 }
 
 interface AiBotMatrixProps {
@@ -56,14 +58,21 @@ interface JsonLdGridProps {
 // ============================================================================
 // 5. SUB-COMPONENTS
 // ============================================================================
-function LlmsTxtCard({ isDetected, title, foundText, missingText }: LlmsTxtCardProps) {
+function LlmsTxtCard({
+  isDetected,
+  isFullDetected,
+  title,
+  foundText,
+  missingText,
+  isAr,
+}: LlmsTxtCardProps) {
   return (
     <div className="md:col-span-5 rounded-2xl border border-white/[0.08] bg-[#0A0C10] p-5 flex flex-col justify-between space-y-4">
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
           <span className="flex items-center gap-1.5 text-zinc-300 font-semibold">
             <FileText className="size-4 text-emerald-400" />
-            <span>/llms.txt</span>
+            <span>/llms.txt & /llms-full.txt</span>
           </span>
           <a
             href={LLMS_SPEC_URL}
@@ -78,18 +87,38 @@ function LlmsTxtCard({ isDetected, title, foundText, missingText }: LlmsTxtCardP
         <p className="text-xs font-medium text-zinc-300 leading-relaxed">{title}</p>
       </div>
 
-      <div className="pt-3 border-t border-white/[0.06] flex items-center gap-2">
-        {isDetected ? (
-          <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl w-full">
-            <CheckCircle2 className="size-4 shrink-0" />
-            <span className="text-xs font-mono font-medium">{foundText}</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-amber-300 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl w-full">
-            <XCircle className="size-4 shrink-0 text-amber-400" />
-            <span className="text-xs font-mono font-medium">{missingText}</span>
-          </div>
-        )}
+      <div className="pt-3 border-t border-white/[0.06] space-y-2">
+        {/* Standard /llms.txt */}
+        <div className="flex items-center justify-between p-2.5 rounded-xl border border-white/[0.05] bg-[#0D0F14] text-xs">
+          <span className="font-mono text-zinc-300 font-semibold">/llms.txt</span>
+          {isDetected ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg font-semibold">
+              <CheckCircle2 className="size-3" />
+              <span>{isAr ? 'متوفر' : 'FOUND'}</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[11px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-lg font-semibold">
+              <XCircle className="size-3" />
+              <span>{isAr ? 'غير متوفر' : 'MISSING'}</span>
+            </span>
+          )}
+        </div>
+
+        {/* Extended /llms-full.txt */}
+        <div className="flex items-center justify-between p-2.5 rounded-xl border border-white/[0.05] bg-[#0D0F14] text-xs">
+          <span className="font-mono text-zinc-300 font-semibold">/llms-full.txt</span>
+          {isFullDetected ? (
+            <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg font-semibold">
+              <CheckCircle2 className="size-3" />
+              <span>{isAr ? 'متوفر' : 'FOUND'}</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[11px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-lg font-semibold">
+              <XCircle className="size-3" />
+              <span>{isAr ? 'غير متوفر' : 'MISSING'}</span>
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -216,12 +245,14 @@ export function GeoDeepDive({ geo, lang }: GeoDeepDiveProps) {
 
       {/* Grid: llms.txt & AI Crawlers */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        {/* /llms.txt Block */}
+        {/* /llms.txt & /llms-full.txt Block */}
         <LlmsTxtCard
           isDetected={geo.llmsTxtDetected}
+          isFullDetected={geo.llmsFullTxtDetected}
           title={t.llmsTxtTitle}
           foundText={t.llmsTxtFound}
           missingText={t.llmsTxtMissing}
+          isAr={isAr}
         />
 
         {/* AI Bots Access Matrix */}

@@ -31,12 +31,13 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
     issues.push({
       id: 'geo-missing-llms-full-txt',
       category: 'geo',
-      severity: 'info',
+      severity: 'warning',
       title: 'Missing `/llms-full.txt` Extended Context File',
       description: '`/llms-full.txt` was not found. This companion file provides complete, in-depth text for deep RAG ingestion.',
       impact: 'LLM agents building large context windows cannot fetch your entire knowledge base in a single pass.',
       recommendation: 'Add `public/llms-full.txt` containing full documentation in raw markdown.',
       targetFile: 'public/llms-full.txt',
+      codeSnippet: `# ${origin} - Full Architectural & Technical Documentation\n\n> Comprehensive product documentation and architectural references designed for deep RAG ingestion by LLM search agents.\n\n## Overview\nComplete reference architecture, system capabilities, and canonical resources.\n\n## Core Capabilities\n- Autonomous search engine evaluation\n- Generative Engine Optimization (GEO)\n- Real-DOM UI/UX quality scoring\n\n## Canonical Links\n- [Platform Home](${origin}/)\n- [UI/UX Lab](${origin}/ui-ux)\n- [Methodology](${origin}/methodology)`,
     });
   }
 
@@ -272,11 +273,13 @@ export function runGeoAudit(ctx: FetchedAuditContext): CategoryResult<GeoMetrics
       issues.push({
         id: 'geo-missing-website-schema',
         category: 'geo',
-        severity: 'info',
+        severity: 'warning',
         title: 'Missing WebSite Schema',
         description: 'No `WebSite` schema found defining the site name and search action.',
         impact: 'Prevents Google from generating sitelinks search boxes and AI knowledge graph associations.',
         recommendation: 'Add a WebSite schema in `src/app/layout.tsx`.',
+        targetFile: 'src/app/layout.tsx',
+        codeSnippet: `<script\n  type="application/ld+json"\n  dangerouslySetInnerHTML={{\n    __html: JSON.stringify({\n      '@context': 'https://schema.org',\n      '@type': 'WebSite',\n      name: 'Your Brand Name',\n      url: '${origin}',\n    }),\n  }}\n/>`,
       });
     }
   }
