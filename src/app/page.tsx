@@ -18,7 +18,6 @@ import { translations } from '@/lib/translations';
 import { AuditHeader } from '@/components/AuditHeader';
 import { UrlInputBar } from '@/components/UrlInputBar';
 import { ScoreBento } from '@/components/ScoreBento';
-import { BrandPaletteSection } from '@/components/BrandPaletteSection';
 import { GeoDeepDive } from '@/components/GeoDeepDive';
 import { IssuesList } from '@/components/IssuesList';
 import { MasterPromptModal } from '@/components/MasterPromptModal';
@@ -352,13 +351,6 @@ export default function AuditDashboardPage() {
               audit={auditData}
               lang={lang}
               onSelectCategory={(category) => setSelectedCategory(category)}
-            />
-
-            {/* Extracted Brand Palette & 90/10 Identity Section */}
-            <BrandPaletteSection
-              colors={auditData.extractedColors}
-              lang={lang}
-              targetDomain={auditData.domain}
             />
 
             {/* GEO AI Engine Telemetry */}

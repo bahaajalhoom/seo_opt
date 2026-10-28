@@ -61,20 +61,30 @@ function CreatorAttributionPill({ isAr }: { isAr: boolean }) {
 
 function DesktopNavigation({ pathname, t }: NavLinksProps) {
   return (
-    <nav className="hidden lg:flex items-center gap-1 text-xs">
+    <nav className="hidden lg:flex items-center gap-1.5 text-xs">
       {NAV_ROUTES.map((route) => {
         const isActive = pathname === route.href;
+        const isCoreTool = route.href === '/' || route.href === '/ui-ux';
         return (
           <Link
             key={route.href}
             href={route.href}
-            className={`px-3 py-1.5 rounded-lg transition-colors font-medium ${
+            className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 ${
               isActive
-                ? 'text-white bg-white/[0.08] font-bold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]'
+                ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 font-bold shadow-sm'
+                : isCoreTool
+                ? 'text-zinc-200 hover:text-white hover:bg-white/[0.05] border border-transparent'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03] border border-transparent'
             }`}
           >
-            {t[route.labelKey]}
+            {isCoreTool && (
+              <span
+                className={`size-1.5 rounded-full ${
+                  isActive ? 'bg-emerald-400' : 'bg-zinc-600'
+                }`}
+              />
+            )}
+            <span>{t[route.labelKey]}</span>
           </Link>
         );
       })}
@@ -84,21 +94,31 @@ function DesktopNavigation({ pathname, t }: NavLinksProps) {
 
 function MobileNavDrawer({ pathname, t, onItemClick }: NavLinksProps) {
   return (
-    <div className="lg:hidden border-b border-white/[0.08] bg-[#08090C] px-4 py-4 space-y-2 animate-in slide-in-from-top-2 duration-150">
+    <div className="lg:hidden border-b border-white/[0.08] bg-[#08090C] px-4 py-4 space-y-1.5 animate-in slide-in-from-top-2 duration-150">
       {NAV_ROUTES.map((route) => {
         const isActive = pathname === route.href;
+        const isCoreTool = route.href === '/' || route.href === '/ui-ux';
         return (
           <Link
             key={route.href}
             href={route.href}
             onClick={onItemClick}
-            className={`block px-3 py-2 rounded-lg text-xs font-medium ${
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
               isActive
-                ? 'text-white bg-white/[0.08] font-bold'
-                : 'text-zinc-300 hover:text-white hover:bg-white/[0.04]'
+                ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-bold'
+                : isCoreTool
+                ? 'text-zinc-200 hover:text-white hover:bg-white/[0.04]'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]'
             }`}
           >
-            {t[route.labelKey]}
+            {isCoreTool && (
+              <span
+                className={`size-1.5 rounded-full ${
+                  isActive ? 'bg-emerald-400' : 'bg-zinc-600'
+                }`}
+              />
+            )}
+            <span>{t[route.labelKey]}</span>
           </Link>
         );
       })}
