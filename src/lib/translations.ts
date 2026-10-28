@@ -10,6 +10,7 @@ export interface TranslationDictionary {
   creatorCredit: string;
   creatorRole: string;
   navAudit: string;
+  navUiUx: string;
   navMethodology: string;
   navAbout: string;
   navTerms: string;
@@ -81,6 +82,26 @@ export interface TranslationDictionary {
   featureSpeedDesc: string;
   featureFixTitle: string;
   featureFixDesc: string;
+  uiuxHeroTitle: string;
+  uiuxHeroSub: string;
+  uiuxInputPlaceholder: string;
+  uiuxAuditButton: string;
+  uiuxAuditingButton: string;
+  uiuxPaletteTitle: string;
+  uiuxPaletteSub: string;
+  uiuxPrescriptionsTitle: string;
+  uiuxPrescriptionsSub: string;
+  uiuxActionLabel: string;
+  uiuxDiagnosisLabel: string;
+  uiuxPrincipleLabel: string;
+  uiuxCopySnippet: string;
+  uiuxSnippetCopied: string;
+  uiuxVectorsTitle: string;
+  uiuxColorsCategory: string;
+  uiuxTypographyCategory: string;
+  uiuxButtonsCategory: string;
+  uiuxHierarchyCategory: string;
+  uiuxFormsCategory: string;
 }
 
 export const translations: Record<SupportedLang, TranslationDictionary> = {
@@ -94,6 +115,7 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     creatorCredit: 'تم تصميم وتطوير منصة CRAWLIX بالكامل بواسطة المهندس أحمد جلهوم (Ahmad Jalhoom)',
     creatorRole: 'مهندس برمجيات رئيسي ومصمم نظم الذكاء الاصطناعي المتقدمة',
     navAudit: 'منصة الفحص',
+    navUiUx: 'فحص UI/UX',
     navMethodology: 'المنهجية',
     navAbout: 'عن المؤسس',
     navTerms: 'شروط الاستخدام',
@@ -175,6 +197,26 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     featureSpeedDesc: 'قياس أزمنة LCP، CLS، وسرعة الاستجابة بدقة بالغة.',
     featureFixTitle: 'مُولّد الإصلاح الآلي 100%',
     featureFixDesc: 'توليد كود وإرشادات جاهزة للذكاء الاصطناعي لسد كل الثغرات فورياً.',
+    uiuxHeroTitle: 'مختبر التدقيق الهندسي لتجربة وواجهة المستخدم (UI/UX Lab)',
+    uiuxHeroSub: 'فحص حقيقي للـ DOM والألوان والخطوط والأزرار والتسلسل البصري. يعطيك توجيهات حاسمة ومباشرة: اعمل هيك وسوي هيك، وزبط اللون هذا، مع أكواد CSS وTailwind جاهزة للتطبيق.',
+    uiuxInputPlaceholder: 'أدخل رابط أي موقع لفحص الـ UI/UX وتباين الألوان (مثال: https://example.com)...',
+    uiuxAuditButton: 'بدء فحص UI/UX الحقيقي',
+    uiuxAuditingButton: 'جاري استخراج الألوان وتدقيق الواجهة...',
+    uiuxPaletteTitle: 'لوحة الألوان المستخرجة وانضباط الباليت (90/10 Rule)',
+    uiuxPaletteSub: 'استخراج دقيق لكافة درجات HEX ونسب الإضاءة (Luminance) وفحص التشتت اللوني.',
+    uiuxPrescriptionsTitle: 'سجل التوجيهات الهندسية (اعمل هيك وسوي هيك)',
+    uiuxPrescriptionsSub: 'حلول تصميمية مباشرة وقواعد صارمة لعلاج تباين الألوان ومناطق اللمس والأزرار العائمة.',
+    uiuxActionLabel: 'التوجيه المباشر (اعمل هيك):',
+    uiuxDiagnosisLabel: 'التشخيص الهندسي الدقيق:',
+    uiuxPrincipleLabel: 'القاعدة التصميمية المعتمدة:',
+    uiuxCopySnippet: 'نسخ الكود التصحيحي',
+    uiuxSnippetCopied: 'تم نسخ الكود!',
+    uiuxVectorsTitle: 'المحاور الخمسة لجودة الواجهة',
+    uiuxColorsCategory: 'الألوان والتباين',
+    uiuxTypographyCategory: 'الخطوط والمقروئية',
+    uiuxButtonsCategory: 'الأزرار وبيئة اللمس',
+    uiuxHierarchyCategory: 'الهيكل والتسلسل البصري',
+    uiuxFormsCategory: 'النماذج وحقول الإدخال',
   },
   en: {
     brandTitle: 'CRAWLIX',
@@ -186,6 +228,7 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     creatorCredit: 'Crafted and engineered end-to-end by Ahmad Jalhoom (أحمد جلهوم)',
     creatorRole: 'Lead Software Architect & AI Systems Engineer',
     navAudit: 'Auditor',
+    navUiUx: 'UI/UX Lab',
     navMethodology: 'Methodology',
     navAbout: 'About Architect',
     navTerms: 'Terms of Service',
@@ -267,5 +310,25 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     featureSpeedDesc: 'Precision TTFB measurement, document weight, and DOM tree complexity.',
     featureFixTitle: '1-Click Master AI Repair',
     featureFixDesc: 'Deterministic prompt generator to guide Claude or Cursor to a 100/100 score.',
+    uiuxHeroTitle: 'Autonomous UI/UX Architecture Lab & Design Auditor',
+    uiuxHeroSub: 'Real DOM inspection of color palettes, typography, touch ergonomics, and visual hierarchy. Delivers deterministic prescriptive commands: fix this color, tune this contrast, expand button padding, with copyable CSS/Tailwind snippets.',
+    uiuxInputPlaceholder: 'Enter any target URL for real UI/UX audit (e.g. https://example.com)...',
+    uiuxAuditButton: 'Run Real UI/UX Audit',
+    uiuxAuditingButton: 'Analyzing DOM & Extracting Palettes...',
+    uiuxPaletteTitle: 'Extracted Color Palette & 90/10 Discipline',
+    uiuxPaletteSub: 'Precision extraction of all HEX tones, relative luminance, and color dispersion.',
+    uiuxPrescriptionsTitle: 'Actionable Design Prescriptions Ledger',
+    uiuxPrescriptionsSub: 'Direct engineering directives and strict guidelines to fix contrast, touch boundaries, and CTAs.',
+    uiuxActionLabel: 'Action Directive (Fix This):',
+    uiuxDiagnosisLabel: 'Diagnostic Findings:',
+    uiuxPrincipleLabel: 'Governing Design Principle:',
+    uiuxCopySnippet: 'Copy CSS/Fix',
+    uiuxSnippetCopied: 'Snippet Copied!',
+    uiuxVectorsTitle: 'Five-Vector Interface Benchmark',
+    uiuxColorsCategory: 'Colors & Contrast',
+    uiuxTypographyCategory: 'Typography & Legibility',
+    uiuxButtonsCategory: 'Buttons & Touch Ergonomics',
+    uiuxHierarchyCategory: 'Hierarchy & Structure',
+    uiuxFormsCategory: 'Forms & Inputs',
   },
 };

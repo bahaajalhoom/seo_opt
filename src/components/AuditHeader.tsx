@@ -17,6 +17,7 @@ import { Globe, Download, Menu, X } from 'lucide-react';
 // Add or edit navigation bar links here.
 const NAV_ROUTES = [
   { href: '/', labelKey: 'navAudit' as const },
+  { href: '/ui-ux', labelKey: 'navUiUx' as const },
   { href: '/methodology', labelKey: 'navMethodology' as const },
   { href: '/about', labelKey: 'navAbout' as const },
   { href: '/terms', labelKey: 'navTerms' as const },
