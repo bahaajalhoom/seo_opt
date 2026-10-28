@@ -159,8 +159,9 @@ export function runPerformanceAudit(ctx: FetchedAuditContext): CategoryResult<Pe
     const isAsync = $(el).attr('async') !== undefined;
     const isDefer = $(el).attr('defer') !== undefined;
     const isModule = $(el).attr('type') === 'module';
+    const isNoModule = $(el).attr('nomodule') !== undefined;
 
-    if (!isAsync && !isDefer && !isModule) {
+    if (!isAsync && !isDefer && !isModule && !isNoModule) {
       blockingScripts.push({ src, isAsyncOrDefer: false });
     }
   });

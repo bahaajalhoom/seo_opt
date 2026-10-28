@@ -2,10 +2,18 @@ User-agent: *
 Allow: /
 
 User-agent: GPTBot
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
 User-agent: PerplexityBot
+Allow: /
+
 User-agent: Google-Extended
+Allow: /
+
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://pulsegeo.dev/sitemap.xml
+Sitemap: https://seo-opt.apps.taqat.academy/sitemap.xml

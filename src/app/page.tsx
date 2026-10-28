@@ -202,15 +202,15 @@ function MasterPromptCtaBanner({ title, subtitle, ctaText, onOpen }: MasterPromp
 }
 
 function EmptyHeroSection({ lang, title, subtitle, t }: EmptyHeroProps) {
-  const badgeText =
-    lang === 'ar'
-      ? 'فحص شبكي لحظي عالي الدقة · NEXT.JS 16 & NODE 24'
-      : 'REAL-TIME AUDIT TELEMETRY · NEXT.JS 16 & NODE 24';
+  const isAr = lang === 'ar';
+  const badgeText = isAr
+    ? 'فحص شبكي لحظي عالي الدقة · NEXT.JS 16 & NODE 24'
+    : 'REAL-TIME AUDIT TELEMETRY · NEXT.JS 16 & NODE 24';
 
   return (
-    <div className="py-12 sm:py-20 space-y-14">
+    <div className="py-12 sm:py-20 space-y-16">
       {/* Hero Headline */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto">
+      <div className="text-center space-y-4 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1.5 rounded-full">
           <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
           <span>{badgeText}</span>
@@ -218,37 +218,108 @@ function EmptyHeroSection({ lang, title, subtitle, t }: EmptyHeroProps) {
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
           {title}
         </h1>
-        <p className="text-sm text-zinc-400 leading-relaxed text-pretty max-w-xl mx-auto">
+        <p className="text-sm sm:text-base text-zinc-400 leading-relaxed text-pretty max-w-2xl mx-auto">
           {subtitle}
         </p>
       </div>
 
-      {/* 4 Feature Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {PAGE_CONFIG.features.map((feature) => {
-          const Icon = feature.icon;
-          return (
-            <div
-              key={feature.id}
-              className={`surface-hud-interactive rounded-2xl p-5 space-y-3 ${
-                feature.highlight ? 'border-emerald-500/30' : ''
-              }`}
-            >
+      {/* Primary Vectors Section */}
+      <section className="space-y-6">
+        <div className="text-center space-y-2">
+          <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+            {isAr ? 'المحاور الأساسية لتدقيق المنصات والمواقع' : 'Core Platform Optimization Vectors'}
+          </h2>
+          <p className="text-xs text-zinc-400 max-w-xl mx-auto">
+            {isAr
+              ? 'تحليل فوري يغطي 44 معياراً تقنياً عبر محركات البحث، زواحف الذكاء الاصطناعي، ومقاييس الأداء العالمية.'
+              : 'Real-time analysis spanning 44 technical heuristics across search crawlers, AI models, and performance benchmarks.'}
+          </p>
+        </div>
+
+        {/* 4 Feature Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {PAGE_CONFIG.features.map((feature) => {
+            const Icon = feature.icon;
+            return (
               <div
-                className={`size-10 rounded-xl flex items-center justify-center ${
-                  feature.highlight
-                    ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400'
-                    : 'bg-white/[0.04] border border-white/[0.08] text-zinc-200'
+                key={feature.id}
+                className={`surface-hud-interactive rounded-2xl p-5 space-y-3 ${
+                  feature.highlight ? 'border-emerald-500/30' : ''
                 }`}
               >
-                <Icon className="size-5 stroke-[1.8]" />
+                <div
+                  className={`size-10 rounded-xl flex items-center justify-center ${
+                    feature.highlight
+                      ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400'
+                      : 'bg-white/[0.04] border border-white/[0.08] text-zinc-200'
+                  }`}
+                >
+                  <Icon className="size-5 stroke-[1.8]" />
+                </div>
+                <h3 className="text-sm font-semibold text-white">{t[feature.titleKey]}</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">{t[feature.descKey]}</p>
               </div>
-              <h4 className="text-sm font-semibold text-white">{t[feature.titleKey]}</h4>
-              <p className="text-xs text-zinc-400 leading-relaxed">{t[feature.descKey]}</p>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Deep Content Architecture (Zero Thin Content, Rich Semantic Information) */}
+      <section className="surface-hud rounded-2xl p-6 sm:p-8 border border-white/[0.08] bg-[#08090C] space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <span className="size-2 rounded-full bg-emerald-400" />
+            <span>
+              {isAr
+                ? 'كيف يعمل محرك CRAWLIX PRO وما هي المعايير التقنية المفحوصة؟'
+                : 'How CRAWLIX PRO Evaluates Your Web Architecture'}
+            </span>
+          </h2>
+          <p className="text-xs text-zinc-400 leading-relaxed">
+            {isAr
+              ? 'صُمم هذا المحرك لتقديم قراءة لحظية دقيقة 100% لبنية الكود، والترويسات الشبكية، ومخططات البيانات الدلالية، دون الاعتماد على بيانات تقريبية.'
+              : 'Engineered to provide 100% deterministic telemetry across DOM structure, network headers, and semantic schemas.'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs text-zinc-300">
+          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-2">
+            <h3 className="font-semibold text-white flex items-center gap-1.5">
+              <span>🔍</span>
+              <span>{isAr ? 'السيو ومحركات البحث (SEO)' : 'Search Engine Optimization'}</span>
+            </h3>
+            <p className="text-zinc-400 leading-relaxed">
+              {isAr
+                ? 'يفحص دقة طول وسوم العناوين (50-60 حرفاً)، والأوصاف التعريفية (120-160 حرفاً)، ووجود الروابط القانونية Canonical لتفادي عقوبات المحتوى المكرر، وتسلسل العناوين الهرمية H1-H6، وبطاقات OpenGraph و Twitter Cards.'
+                : 'Validates title tags, meta descriptions, self-referencing canonical links, sequential heading hierarchy, and social sharing metadata.'}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-2">
+            <h3 className="font-semibold text-white flex items-center gap-1.5">
+              <span>🤖</span>
+              <span>{isAr ? 'محركات الذكاء الاصطناعي (GEO)' : 'Generative Engine Optimization'}</span>
+            </h3>
+            <p className="text-zinc-400 leading-relaxed">
+              {isAr
+                ? 'يتحقق من وجود ملفات llms.txt و llms-full.txt الرسمية، وسلامة أذونات روبوتات الذكاء الاصطناعي (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) في robots.txt، وكثافة الإجابات المباشرة E-E-A-T ومخططات Schema.org JSON-LD.'
+                : 'Verifies /llms.txt and /llms-full.txt manifests, AI crawler directives in robots.txt, direct answer passage density, and rich Schema.org entities.'}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05] space-y-2">
+            <h3 className="font-semibold text-white flex items-center gap-1.5">
+              <span>⚡</span>
+              <span>{isAr ? 'السرعة والأمان وسهولة الوصول' : 'Speed, Security & Accessibility'}</span>
+            </h3>
+            <p className="text-zinc-400 leading-relaxed">
+              {isAr
+                ? 'يقيس زمن استجابة السيرفر الأول (TTFB)، وضغط البيانات (Gzip/Brotli)، وتعقيد شجرة عناصر DOM، وترويسات الأمان (HSTS, CSP, nosniff, Referrer-Policy)، وتوافقية الوصول WCAG 2.1 AA مع تمكين تكبير الشاشة.'
+                : 'Audits TTFB, Brotli/Gzip compression, DOM tree depth, hardened security headers (HSTS, CSP, nosniff), and WCAG 2.1 accessibility criteria.'}
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

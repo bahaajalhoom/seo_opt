@@ -1,0 +1,68 @@
+# CRAWLIX PRO — Full Architectural & Technical Documentation
+
+> Official comprehensive technical reference for CRAWLIX PRO, designed for deep RAG ingestion, LLM context windows, and autonomous search engine crawlers.
+> Platform URL: https://seo-opt.apps.taqat.academy/
+> Created and Engineered by: Ahmad Jalhoom (أحمد جلهوم) | https://ahmedsaleh.website
+
+---
+
+## 1. Executive Summary & Mission
+CRAWLIX PRO is an enterprise-grade, high-precision web benchmarking engine developed to evaluate modern web applications across dual optimization vectors:
+1. Traditional Search Engine Optimization (SEO & Google Search Indexing).
+2. Generative Engine Optimization (GEO — AI citation readiness across ChatGPT Search, Perplexity AI, Claude, and Google Gemini).
+3. Web Performance & Core Web Vitals (TTFB, payload compression, DOM tree complexity, render-blocking scripts).
+4. Accessibility Standards (WCAG 2.1 AA contrast ratios, Fitts's Law touch targets, explicit form labeling).
+5. Modern Web Security (Strict HSTS policies, CSP, anti-MIME sniffing, tabnabbing defenses).
+6. UI/UX Architecture Lab (90/10 neutral color discipline, typography scale, ergonomic layout hierarchy).
+
+---
+
+## 2. Core Heuristics & Diagnostic Engine
+
+### A. Traditional SEO Vector
+- Page Title Analysis: Optimal character threshold (50-60 characters), brand presence, keyword relevance.
+- Meta Description Validation: Target length (120-160 characters), click-through rate optimization.
+- Canonical Link Verification: Fully-qualified absolute HTTPS self-referencing canonicals to prevent duplicate content penalties.
+- Heading Hierarchy Discipline: Exact single `<h1>` enforcement, sequential `<h2>` through `<h6>` structure with zero level skipping.
+- Social Graph Metadata: Complete OpenGraph (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`) and Twitter Cards (`summary_large_image`).
+- XML Sitemap & robots.txt Discovery: Dynamic crawling directives, sitemap indexing, and canonical URLs.
+
+### B. Generative Engine Optimization (GEO) Vector
+- `llms.txt` and `llms-full.txt` Manifest Standards: RFC-compliant markdown context manifests providing structured documentation directly to AI search engines.
+- AI Search Bot Permissions: Real-time validation of permissions for `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`, `CCBot`, and `ByteSpider` in `robots.txt`.
+- Schema.org JSON-LD Structured Entities: Rich semantic knowledge graphs including `WebSite`, `Organization`, `Article`, `BreadcrumbList`, and `FAQPage`.
+- Direct Answer Passage Density: Semantic extraction of concise, factual passages (40-60 words) primed for zero-click AI search snippets.
+- E-E-A-T Authority Signals: Identifiable author verification, explicit About Us, Contact, Terms of Service, and Privacy Policy endpoints.
+
+### C. Web Performance & Core Web Vitals
+- Time to First Byte (TTFB): Target < 200ms via Edge caching and stale-while-revalidate headers.
+- Text Payload Compression: Automatic Brotli (`br`), Gzip, and zstd HTTP encoding verification.
+- DOM Tree Health: Node count limits (< 800 optimal, > 1400 failing) and maximum nesting depth thresholds (< 32 levels).
+- Render-Blocking Asset Elimination: Deferral or asynchronous execution of `<script>` tags in `<head>`.
+- Image Format Optimization: Automated conversion to Next-Gen WebP and AVIF formats with explicit width/height to eliminate Cumulative Layout Shift (CLS).
+
+### D. Security & Hardened HTTP Headers
+- SSL/TLS Protocol: 100% encrypted HTTPS enforcement with automatic HTTP redirection.
+- HTTP Strict Transport Security (HSTS): Minimum 1-year duration (`max-age=31536000; includeSubDomains; preload`).
+- Content Security Policy (CSP): Granular defense against Cross-Site Scripting (XSS) and code injection.
+- Clickjacking Defense: `X-Frame-Options: SAMEORIGIN` or CSP `frame-ancestors`.
+- MIME-Sniffing Defense: `X-Content-Type-Options: nosniff`.
+- Reverse Tabnabbing Protection: Mandatory `rel="noopener noreferrer"` on all external links opening in `_blank`.
+
+---
+
+## 3. Technology Stack & Framework
+- Runtime: Node.js 24 LTS + Next.js 16 (Turbopack Engine).
+- UI Architecture: React 19 + Tailwind CSS + Lucide Precision Icons.
+- Design System: Obsidian Neutral Baseline (`#06070A`, `#090C12`) + Laser Emerald Accent (`#10B981`).
+- Compliance: WCAG 2.1 AA Accessibility & RFC 9457 Problem Details.
+
+---
+
+## 4. Canonical Platform Routes
+- Platform Auditor (SEO & GEO): https://seo-opt.apps.taqat.academy/
+- UI/UX Design Lab: https://seo-opt.apps.taqat.academy/ui-ux
+- Methodology & Standards: https://seo-opt.apps.taqat.academy/methodology
+- About the Founder: https://seo-opt.apps.taqat.academy/about
+- Terms of Service: https://seo-opt.apps.taqat.academy/terms
+- Privacy Policy: https://seo-opt.apps.taqat.academy/privacy

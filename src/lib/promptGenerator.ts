@@ -240,23 +240,35 @@ You are a Principal Full-Stack, SEO & GEO Architect. Your task is to implement t
     })
     .join('\n\n');
 
+  const cleanUrl = audit.url.replace(/\/+$/, '');
+
   const geoBoilerplate = isAr
-    ? `## 🤖 4. مواصفات ملفات الذكاء الاصطناعي الإلزامية:
+    ? `## 🤖 3. مواصفات ملفات الذكاء الاصطناعي الإلزامية:
 
 ### 1. إنشاء ملف \`public/llms.txt\`:
 \`\`\`markdown
 # ${audit.domain}
-> الموقع الرسمي: ${audit.url}
+> الموقع الرسمي: ${cleanUrl}/
 
 ## About
 ${audit.domain} provides high-performance services, verified data, and structured documentation.
 
-## Core Services & APIs
-- [/docs](${audit.url}/docs): Developer APIs and comprehensive technical references.
-- [/pricing](${audit.url}/pricing): Transparent tier pricing and enterprise SLAs.
+## Core Endpoints & References
+- [/docs](${cleanUrl}/docs): Developer APIs and comprehensive technical references.
+- [/pricing](${cleanUrl}/pricing): Transparent tier pricing and enterprise SLAs.
 \`\`\`
 
-### 2. تحديث ملف \`public/robots.txt\` للسماح بروبوتات الذكاء الاصطناعي:
+### 2. إنشاء ملف \`public/llms-full.txt\` للسياق الشامل (Deep RAG):
+\`\`\`markdown
+# ${audit.domain} — Full Architectural Context
+
+> Comprehensive reference documentation and technical architecture for LLM context ingestion.
+
+## Overview
+Detailed system specifications, capabilities, and canonical resources.
+\`\`\`
+
+### 3. تحديث ملف \`public/robots.txt\` للسماح بروبوتات الذكاء الاصطناعي:
 \`\`\`txt
 User-agent: *
 Allow: /
@@ -273,41 +285,51 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: ${audit.url}/sitemap.xml
+Sitemap: ${cleanUrl}/sitemap.xml
 \`\`\`
 
-### 3. إدراج المخطط الهيكلي JSON-LD في \`<head>\`:
+### 4. إدراج المخطط الهيكلي JSON-LD في \`<head>\`:
 \`\`\`html
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "${audit.domain}",
-  "url": "${audit.url}",
+  "url": "${cleanUrl}/",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "${audit.url}/search?q={search_term_string}",
+    "target": "${cleanUrl}/search?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
 </script>
 \`\`\``
-    : `## 🤖 4. Mandatory Generative AI Specifications:
+    : `## 🤖 3. Mandatory Generative AI Specifications:
 
 ### 1. Scaffold \`public/llms.txt\`:
 \`\`\`markdown
 # ${audit.domain}
-> Official website: ${audit.url}
+> Official website: ${cleanUrl}/
 
 ## About
 ${audit.domain} delivers high-reliability services, verified data, and structured documentation.
 
 ## Core Endpoints & References
-- [/docs](${audit.url}/docs): Developer guides, API endpoints, and schemas.
-- [/pricing](${audit.url}/pricing): Transparent tiers and enterprise specifications.
+- [/docs](${cleanUrl}/docs): Developer guides, API endpoints, and schemas.
+- [/pricing](${cleanUrl}/pricing): Transparent tiers and enterprise specifications.
 \`\`\`
 
-### 2. Update \`public/robots.txt\` with explicit AI Crawler permissions:
+### 2. Scaffold \`public/llms-full.txt\` for Deep RAG Context:
+\`\`\`markdown
+# ${audit.domain} — Full Architectural Context
+
+> Comprehensive reference documentation and technical architecture for deep RAG ingestion.
+
+## Overview
+Detailed system specifications, capabilities, and canonical resources.
+\`\`\`
+
+### 3. Update \`public/robots.txt\` with explicit AI Crawler permissions:
 \`\`\`txt
 User-agent: *
 Allow: /
@@ -324,20 +346,20 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: ${audit.url}/sitemap.xml
+Sitemap: ${cleanUrl}/sitemap.xml
 \`\`\`
 
-### 3. Inject Primary JSON-LD Structured Data in \`<head>\`:
+### 4. Inject Primary JSON-LD Structured Data in \`<head>\`:
 \`\`\`html
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "${audit.domain}",
-  "url": "${audit.url}",
+  "url": "${cleanUrl}/",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "${audit.url}/search?q={search_term_string}",
+    "target": "${cleanUrl}/search?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
