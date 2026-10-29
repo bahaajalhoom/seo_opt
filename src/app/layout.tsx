@@ -13,9 +13,9 @@ const SITE_CONFIG = {
   name: 'CRAWLIX PRO',
   architect: 'Ahmad Jalhoom (أحمد جلهوم)',
   architectUrl: 'https://ahmedsaleh.website',
-  title: 'CRAWLIX PRO — منصة تدقيق السيو ومحركات الذكاء الاصطناعي',
+  title: 'CRAWLIX PRO — منصة التدقيق المعياري لمحركات البحث والذكاء الاصطناعي | Ahmad Jalhoom',
   description:
-    'محرك التدقيق الهندسي المستقل لفحص السيو (SEO)، ومحركات الذكاء الاصطناعي (GEO)، وسرعة الويب مع استخراج برومبت الإصلاح الشامل. تطوير: م. أحمد جلهوم.',
+    'محرك التدقيق المستقل فائق الدقة لفحص معايير السيو (SEO)، محركات الذكاء الاصطناعي (GEO)، سرعة الويب، ومُولّد برومبت الإصلاح الشامل 100%. تطوير وإشراف: أحمد جلهوم (Ahmad Jalhoom).',
 } as const;
 
 // Structured Schema.org Graph (WebSite + Organization)

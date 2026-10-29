@@ -199,39 +199,30 @@ export default function robots(): MetadataRoute.Robots {
 ---
 
 ### File 3: \`src/app/sitemap.ts\` (Dynamic Next.js 16 XML Sitemap)
+> ⚠️ **Mandatory Directive:** Inspect the project codebase (e.g. \`src/app/**/page.tsx\` or navigation links) and populate ALL real discovered routes here under \`${targetUrl}\` so search engines discover all pages with zero 404 errors:
+
 \`\`\`typescript
 import { MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = '${targetUrl}';
-  const now = new Date();
+const BASE_URL = '${targetUrl}';
 
-  return [
-    {
-      url: baseUrl,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: \`\${baseUrl}/about\`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: \`\${baseUrl}/contact\`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: \`\${baseUrl}/privacy\`,
-      lastModified: now,
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
+export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
+
+  // Inspect your project and include all real route paths here:
+  const routes = [
+    { path: '', priority: 1.0, changeFrequency: 'daily' as const },
+    { path: '/about', priority: 0.8, changeFrequency: 'weekly' as const },
+    { path: '/terms', priority: 0.5, changeFrequency: 'monthly' as const },
+    { path: '/privacy', priority: 0.5, changeFrequency: 'monthly' as const },
   ];
+
+  return routes.map((r) => ({
+    url: \`\${BASE_URL}\${r.path}\`,
+    lastModified,
+    changeFrequency: r.changeFrequency,
+    priority: r.priority,
+  }));
 }
 \`\`\`
 

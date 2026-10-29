@@ -157,6 +157,7 @@ ${paletteBullets}
 // ============================================================================
 export function generateMasterRepairPrompt(audit: AuditResult, lang: SupportedLang): string {
   const isAr = lang === 'ar';
+  const cleanUrl = audit.url.replace(/\/+$/, '');
   const criticals = audit.issues.filter((i) => i.severity === 'critical');
   const warnings = audit.issues.filter((i) => i.severity === 'warning');
 
@@ -192,17 +193,23 @@ export function generateMasterRepairPrompt(audit: AuditResult, lang: SupportedLa
     ? `## 🎯 دور الذكاء الاصطناعي وقواعد التنفيذ:
 أنت مهندس برمجيات رئيسي وخبير سيو ومحركات ذكاء اصطناعي (Principal Full-Stack, SEO & GEO Architect). مهمتك تطبيق التعديلات البرمجية التالية بدقة واحترافية:
 1. **كتابة كود إنتاجي جاهز للنسخ:** لا تكتفِ بالنصائح النظرية؛ اكتب الأكواد المحدثة كاملة لكل ملف محدد دون اختصارات.
-2. **معايير السيو والـ GEO المتقدمة:** ضبط وسوم Meta والعناوين الهرمية، وروابط Canonical، وخريطة الموقع، وملفات \`public/llms.txt\` و \`public/llms-full.txt\`، وتحديث أذونات \`public/robots.txt\` لروبوتات الذكاء الاصطناعي (GPTBot, ClaudeBot, PerplexityBot, Google-Extended).
-3. **مخططات البيانات المنظمة:** إضافة مخططات Schema.org بصيغة JSON-LD الغنية لتمكين محركات البحث والذكاء الاصطناعي من فهم الكيان والخدمات.
-4. **الأداء وسرعة التحميل (Core Web Vitals):** تحسين استجابة الخادم وترويسات التخزين المؤقت (Cache-Control)، وضغط البيانات، وإزالة حجب الرندرة (Render-blocking scripts).
-5. **إمكانية الوصول والأمان (A11y & Security):** اعتماد وسوم HTML5 الدلالية، وأوصاف الصور alt، وترويسات الأمان (HSTS, CSP, nosniff, Referrer-Policy).`
+2. **فحص صفحات المشروع وإنشاء خريطة موقع حقيقية:** قم بفحص مسارات المشروع (مثل \`src/app/**/page.tsx\` أو روابط التنقل) وأنشئ خريطة موقع حقيقية تضم كافة صفحات الموقع التابعة للنطاق المستهدف (\`${cleanUrl}\`) بدقة، وتجنب تماماً وضع روابط وهمية قد تُرجع خطأ 404.
+3. **توليد ملف \`robots.txt\` متصل بالدومين:** أنشئ ملف \`robots.txt\` يوجه الزواحف إلى رابط خريطة الموقع الصحيحة لنطاقك (\`${cleanUrl}/sitemap.xml\`) مع السماح الكامل لمحركات البحث وروبوتات الذكاء الاصطناعي.
+4. **حماية الكلمات المفتاحية وأسماء البراند في العنوان (Strict SEO Protection):**
+   ⚠️ **تحذير حاسم:** إذا كان الموقع يحتوي على اسم المؤسس، أو اسم العلامة التجارية، أو كلمات مفتاحية يتصدر بها حالياً في جوجل داخل وسم \`<title>\` أو \`<meta name="description">\`، **يُمنع منعاً باتاً حذفها أو شطبها** بهدف تقصير العنوان. حافظ على الكلمات المفتاحية الرابحة كاملة!
+5. **مخططات البيانات المنظمة (Schema.org JSON-LD):** إضافة مخططات Schema.org بصيغة JSON-LD الغنية لتمكين محركات البحث والذكاء الاصطناعي من فهم الكيان والخدمات.
+6. **الأداء وسرعة التحميل (Core Web Vitals):** تحسين استجابة الخادم وترويسات التخزين المؤقت، وضغط البيانات، وإزالة حجب الرندرة.
+7. **إمكانية الوصول والأمان (A11y & Security):** اعتماد وسوم HTML5 الدلالية، وأوصاف الصور alt، وترويسات الأمان الصارمة.`
     : `## 🎯 AI Role & Execution Directives:
 You are a Principal Full-Stack, SEO & GEO Architect. Your task is to implement the following precise engineering changes:
 1. **Production-Ready Code:** Do not provide abstract advice. Output complete, drop-in replacement files and code snippets.
-2. **Advanced SEO & GEO Standards:** Configure metadata tags, canonical alternates, sitemaps, \`public/llms.txt\`, \`public/llms-full.txt\`, and open crawler permissions in \`public/robots.txt\` for AI bots (GPTBot, ClaudeBot, PerplexityBot, Google-Extended).
-3. **Structured Data:** Embed rich Schema.org JSON-LD entities to establish brand authority and knowledge graph citations.
-4. **Core Web Vitals & Speed:** Optimize caching headers, compression, bundle size, and eliminate render-blocking scripts.
-5. **Accessibility & Security:** Enforce semantic HTML5 landmarks, image alt attributes, and hardened security response headers (HSTS, CSP, nosniff, Referrer-Policy).`;
+2. **Inspect Project Routes & Build Real Sitemap:** Scan the codebase (e.g. \`src/app/**/page.tsx\` or navigation links) and generate a 100% functional, real sitemap for the target domain (\`${cleanUrl}\`). NEVER leave broken or fake sitemap links that return 404!
+3. **Deploy Target-Bound Robots.txt:** Create \`public/robots.txt\` pointing to \`${cleanUrl}/sitemap.xml\` with full permissions for search crawlers and AI bots.
+4. **Keyword & Brand Identity Protection (Zero SEO Regression):**
+   ⚠️ **CRITICAL MANDATE:** Never strip the founder name, brand title, or existing ranking keywords from \`<title>\` or \`<meta name="description">\` just to satisfy arbitrary length checkers. Preserve ranking keywords!
+5. **Structured Data:** Embed rich Schema.org JSON-LD entities to establish brand authority and knowledge graph citations.
+6. **Core Web Vitals & Speed:** Optimize caching headers, compression, bundle size, and eliminate render-blocking scripts.
+7. **Accessibility & Security:** Enforce semantic HTML5 landmarks, image alt attributes, and hardened security response headers.`;
 
   const criticalSection = isAr
     ? `## 🚨 1. المشاكل الحرجة التي يجب حلها فوراً (${criticals.length} مشاكل):`
@@ -240,10 +247,85 @@ You are a Principal Full-Stack, SEO & GEO Architect. Your task is to implement t
     })
     .join('\n\n');
 
-  const cleanUrl = audit.url.replace(/\/+$/, '');
-
   const geoBoilerplate = isAr
-    ? `## 🤖 3. مواصفات ملفات الذكاء الاصطناعي الإلزامية:
+    ? `## 🗺️ 3. إنشاء وتفعيل خريطة الموقع (Sitemap) وملف الروبوت (Robots.txt):
+
+### 1. فحص مسارات المشروع وإنشاء خريطة الموقع الحقيقية (\`src/app/sitemap.ts\` أو \`public/sitemap.xml\`):
+> ⚠️ **أمر تنفيذي حاسم للذكاء الاصطناعي:**
+> لا تضع خريطة موقع صماء أو رابطاً وهمياً يُرجع خطأ 404! 
+> قم بفحص بنية مجلدات المشروع واكتشاف كافة مسارات الصفحات الفعلية الموجودة في الكود (مثل \`src/app/**/page.tsx\` أو روابط التنقل في الهيدر والفوتر).
+> أنشئ خريطة الموقع الحقيقية كاملة تغطي كافة المسارات التابعة للنطاق المستهدف (\`${cleanUrl}\`) بدقة مع تاريخ التعديل والأولويات:
+
+**إذا كان المشروع Next.js App Router (الخيار الموصى به):** أنشئ ملف \`src/app/sitemap.ts\`:
+\`\`\`typescript
+import { MetadataRoute } from 'next';
+
+const BASE_URL = '${cleanUrl}';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
+
+  // قم بفحص المشروع وأضف كافة مسارات الصفحات الحقيقية المكتشفة هنا
+  const projectRoutes = [
+    { path: '', priority: 1.0, changeFrequency: 'daily' as const },
+    { path: '/about', priority: 0.8, changeFrequency: 'weekly' as const },
+    { path: '/terms', priority: 0.5, changeFrequency: 'monthly' as const },
+    { path: '/privacy', priority: 0.5, changeFrequency: 'monthly' as const },
+  ];
+
+  return projectRoutes.map((route) => ({
+    url: \`\${BASE_URL}\${route.path}\`,
+    lastModified,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
+}
+\`\`\`
+
+**إذا كان المشروع يعتمد ملفاً ثابتاً:** أنشئ ملف \`public/sitemap.xml\`:
+\`\`\`xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${cleanUrl}/</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- أضف كافة صفحات مشروعك الحقيقية هنا لنفس الدومين -->
+</urlset>
+\`\`\`
+
+---
+
+### 2. إنشاء وتحديث ملف \`public/robots.txt\` متصلاً بنطاقك:
+\`\`\`txt
+User-agent: *
+Allow: /
+
+# روبوتات الذكاء الاصطناعي (GEO AI Crawlers)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# رابط خريطة الموقع الرسمي الحقيقي
+Sitemap: ${cleanUrl}/sitemap.xml
+\`\`\`
+
+---
+
+## 🤖 4. مواصفات ملفات الذكاء الاصطناعي والمخطط المنظم (GEO & Schema):
 
 ### 1. إنشاء ملف \`public/llms.txt\`:
 \`\`\`markdown
@@ -265,30 +347,10 @@ ${audit.domain} provides high-performance services, verified data, and structure
 > Comprehensive reference documentation and technical architecture for LLM context ingestion.
 
 ## Overview
-Detailed system specifications, capabilities, and canonical resources.
+Detailed system specifications, capabilities, and canonical resources for ${audit.domain}.
 \`\`\`
 
-### 3. تحديث ملف \`public/robots.txt\` للسماح بروبوتات الذكاء الاصطناعي:
-\`\`\`txt
-User-agent: *
-Allow: /
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-Sitemap: ${cleanUrl}/sitemap.xml
-\`\`\`
-
-### 4. إدراج المخطط الهيكلي JSON-LD في \`<head>\`:
+### 3. إدراج المخطط الهيكلي JSON-LD في \`<head>\`:
 \`\`\`html
 <script type="application/ld+json">
 {
@@ -304,7 +366,84 @@ Sitemap: ${cleanUrl}/sitemap.xml
 }
 </script>
 \`\`\``
-    : `## 🤖 3. Mandatory Generative AI Specifications:
+    : `## 🗺️ 3. Deploy Functional Sitemap & Target-Bound Robots.txt:
+
+### 1. Scan Project Routes & Generate Functional Sitemap (\`src/app/sitemap.ts\` or \`public/sitemap.xml\`):
+> ⚠️ **MANDATORY AI DIRECTIVE:**
+> Do NOT create a stub or dummy link that returns 404!
+> Inspect the project repository to discover all actual route files (e.g. \`src/app/**/page.tsx\` or navigation links).
+> Generate a 100% real, functional sitemap containing all existing pages under the audited domain (\`${cleanUrl}\`):
+
+**For Next.js App Router (Recommended):** Create \`src/app/sitemap.ts\`:
+\`\`\`typescript
+import { MetadataRoute } from 'next';
+
+const BASE_URL = '${cleanUrl}';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
+
+  // Inspect project structure and populate all real discovered routes here
+  const projectRoutes = [
+    { path: '', priority: 1.0, changeFrequency: 'daily' as const },
+    { path: '/about', priority: 0.8, changeFrequency: 'weekly' as const },
+    { path: '/terms', priority: 0.5, changeFrequency: 'monthly' as const },
+    { path: '/privacy', priority: 0.5, changeFrequency: 'monthly' as const },
+  ];
+
+  return projectRoutes.map((route) => ({
+    url: \`\${BASE_URL}\${route.path}\`,
+    lastModified,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
+}
+\`\`\`
+
+**For Static or Non-Next.js Projects:** Create \`public/sitemap.xml\`:
+\`\`\`xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${cleanUrl}/</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Include all your real discovered pages here -->
+</urlset>
+\`\`\`
+
+---
+
+### 2. Create or Update \`public/robots.txt\` Bound to Your Target Domain:
+\`\`\`txt
+User-agent: *
+Allow: /
+
+# Generative AI Crawlers (GEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Canonical Sitemap Discovery
+Sitemap: ${cleanUrl}/sitemap.xml
+\`\`\`
+
+---
+
+## 🤖 4. Mandatory Generative AI Specifications & Schema.org:
 
 ### 1. Scaffold \`public/llms.txt\`:
 \`\`\`markdown
@@ -326,30 +465,10 @@ ${audit.domain} delivers high-reliability services, verified data, and structure
 > Comprehensive reference documentation and technical architecture for deep RAG ingestion.
 
 ## Overview
-Detailed system specifications, capabilities, and canonical resources.
+Detailed system specifications, capabilities, and canonical resources for ${audit.domain}.
 \`\`\`
 
-### 3. Update \`public/robots.txt\` with explicit AI Crawler permissions:
-\`\`\`txt
-User-agent: *
-Allow: /
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-Sitemap: ${cleanUrl}/sitemap.xml
-\`\`\`
-
-### 4. Inject Primary JSON-LD Structured Data in \`<head>\`:
+### 3. Inject Primary JSON-LD Structured Data in \`<head>\`:
 \`\`\`html
 <script type="application/ld+json">
 {

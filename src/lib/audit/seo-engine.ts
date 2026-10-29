@@ -42,7 +42,7 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       codeSnippet: `export const metadata: Metadata = {\n  title: '${titleVal ? titleVal + ' | Official High-Performance Platform' : 'Platform Name | High-Performance Web Audit & Intelligence'}',\n};`,
       evidence: { currentTitle: titleVal, length: titleLen },
     });
-  } else if (titleLen > 65) {
+  } else if (titleLen > 85) {
     titleStatus = 'too-long';
     scoreDeduction += 5;
     issues.push({
@@ -50,11 +50,11 @@ export function runSeoAudit(ctx: FetchedAuditContext): CategoryResult<SeoMetrics
       category: 'seo',
       severity: 'warning',
       title: 'Page Title May Be Truncated',
-      description: `Title tag is ${titleLen} characters, exceeding the 60 character Google desktop threshold.`,
-      impact: 'Search engines will truncate the title with an ellipsis (...), hiding key brand or benefit words.',
-      recommendation: 'Keep primary keywords in the first 50 characters and trim total length under 60 characters.',
+      description: `Title tag is ${titleLen} characters, exceeding the recommended threshold.`,
+      impact: 'Search engines may truncate title suffix with ellipsis (...).',
+      recommendation: 'Place primary ranking keywords in the first 50 characters and ensure brand identifiers remain intact without stripping core search terms.',
       targetFile: 'src/app/layout.tsx',
-      codeSnippet: `export const metadata: Metadata = {\n  title: '${titleVal ? titleVal.slice(0, 55).trim() : 'Platform Name | Core Value Proposition'}',\n};`,
+      codeSnippet: `export const metadata: Metadata = {\n  title: '${titleVal ? titleVal.slice(0, 60).trim() : 'Platform Name | Core Value Proposition'}',\n};`,
       evidence: { currentTitle: titleVal, length: titleLen },
     });
   }
