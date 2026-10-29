@@ -4,7 +4,6 @@
 // 1. IMPORTS
 // ============================================================================
 import * as React from 'react';
-import Link from 'next/link';
 import {
   Palette,
   Type,
@@ -960,14 +959,6 @@ export default function UiUxAuditPage() {
                 </h2>
               </div>
               <div className="flex items-center gap-2 flex-wrap shrink-0">
-                <Link
-                  href={`/figma-studio?url=${encodeURIComponent(auditResult.url)}`}
-                  className="px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-sm"
-                >
-                  <Sparkles className="size-3.5" />
-                  <span>{isAr ? 'فتح في استوديو Figma' : 'Open in Figma Studio'}</span>
-                </Link>
-
                 <button
                   type="button"
                   onClick={handleCopyMasterPrompt}

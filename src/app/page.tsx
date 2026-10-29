@@ -4,7 +4,6 @@
 // 1. IMPORTS
 // ============================================================================
 import * as React from 'react';
-import Link from 'next/link';
 import {
   Sparkles,
   Search,
@@ -85,8 +84,6 @@ interface MasterPromptBannerProps {
   subtitle: string;
   ctaText: string;
   onOpen: () => void;
-  targetUrl?: string;
-  isAr?: boolean;
 }
 
 interface EmptyHeroProps {
@@ -176,14 +173,7 @@ function ErrorStateBanner({ message, retryText, errorTitle, onRetry }: ErrorBann
   );
 }
 
-function MasterPromptCtaBanner({
-  title,
-  subtitle,
-  ctaText,
-  onOpen,
-  targetUrl,
-  isAr,
-}: MasterPromptBannerProps) {
+function MasterPromptCtaBanner({ title, subtitle, ctaText, onOpen }: MasterPromptBannerProps) {
   return (
     <div className="surface-hud rounded-3xl p-6 sm:p-7 border border-emerald-500/40 shadow-[0_0_32px_rgba(16,185,129,0.08)] flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden">
       <div className="space-y-1.5">
@@ -199,26 +189,14 @@ function MasterPromptCtaBanner({
         <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed">{subtitle}</p>
       </div>
 
-      <div className="flex items-center gap-2.5 shrink-0 flex-wrap sm:flex-nowrap">
-        <button
-          type="button"
-          onClick={onOpen}
-          className="h-11 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#06070A] text-xs font-bold inline-flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-[0_2px_16px_rgba(16,185,129,0.3)]"
-        >
-          <span>{ctaText}</span>
-          <ArrowRight className="size-4 stroke-[2.5] rtl:-scale-x-100" />
-        </button>
-
-        {targetUrl && (
-          <Link
-            href={`/figma-studio?url=${encodeURIComponent(targetUrl)}`}
-            className="h-11 px-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-bold inline-flex items-center justify-center gap-2 transition-all"
-          >
-            <Sparkles className="size-4" />
-            <span>{isAr ? 'استوديو Figma' : 'Figma Studio'}</span>
-          </Link>
-        )}
-      </div>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="h-11 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#06070A] text-xs font-bold inline-flex items-center justify-center gap-2 transition-all active:scale-[0.98] shrink-0 shadow-[0_2px_16px_rgba(16,185,129,0.3)]"
+      >
+        <span>{ctaText}</span>
+        <ArrowRight className="size-4 stroke-[2.5] rtl:-scale-x-100" />
+      </button>
     </div>
   );
 }
@@ -437,8 +415,6 @@ export default function AuditDashboardPage() {
               subtitle={t.masterPromptCtaSub}
               ctaText={t.openMasterPromptBtn}
               onOpen={() => setIsPromptModalOpen(true)}
-              targetUrl={auditData.url}
-              isAr={lang === 'ar'}
             />
 
             {/* Tactical Score Bento */}
