@@ -11,11 +11,12 @@ export interface TranslationDictionary {
   creatorRole: string;
   navAudit: string;
   navUiUx: string;
-  navFigmaStudio: string;
   navMethodology: string;
   navAbout: string;
   navTerms: string;
   navPrivacy: string;
+  navMore: string;
+  reportAvailableAfterAudit: string;
   footerCopyright: string;
   footerTagline: string;
   systemStatus: string;
@@ -137,11 +138,12 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     creatorRole: 'مهندس برمجيات رئيسي ومصمم نظم الذكاء الاصطناعي المتقدمة',
     navAudit: 'فحص SEO & GEO',
     navUiUx: 'فحص UI/UX',
-    navFigmaStudio: 'استوديو Figma',
     navMethodology: 'المنهجية',
     navAbout: 'عن المؤسس',
     navTerms: 'شروط الاستخدام',
     navPrivacy: 'سياسة الخصوصية',
+    navMore: 'المزيد',
+    reportAvailableAfterAudit: 'يتوفر تصدير التقرير بعد إتمام الفحص',
     footerCopyright: 'كافة الحقوق محفوظة © 2026 أحمد جلهوم (Ahmad Jalhoom) · CRAWLIX Systems.',
     footerTagline: 'محرك تدقيق مستقل فائق الدقة، صُمم لتمكين المواقع من تصدر نتائج البحث التقليدية وعصر محركات الذكاء الاصطناعي التوليدي بأعلى المعايير الهندسية.',
     systemStatus: 'حالة الخادم: متصل ومؤمن 100%',
@@ -271,11 +273,12 @@ export const translations: Record<SupportedLang, TranslationDictionary> = {
     creatorRole: 'Lead Software Architect & AI Systems Engineer',
     navAudit: 'SEO & GEO Audit',
     navUiUx: 'UI/UX Lab',
-    navFigmaStudio: 'Figma Studio',
     navMethodology: 'Methodology',
     navAbout: 'About Architect',
     navTerms: 'Terms of Service',
     navPrivacy: 'Privacy Policy',
+    navMore: 'More',
+    reportAvailableAfterAudit: 'Report export becomes available once audit completes',
     footerCopyright: '© 2026 Ahmad Jalhoom (أحمد جلهوم) · CRAWLIX Systems. All rights reserved.',
     footerTagline: 'High-precision autonomous audit engine engineered to benchmark web applications for classic search indexing and generative AI citation vectors.',
     systemStatus: 'Audit Core: Online & 100% Guarded',
